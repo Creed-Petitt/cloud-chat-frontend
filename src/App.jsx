@@ -14,7 +14,7 @@ const App = () => {
 				height: '100vh',
 				transition: 'margin-left 0.3s ease, width 0.3s ease'
 			}}>
-				{<Main />}
+			<Main />
 			</div>
 		</div>
 	)
