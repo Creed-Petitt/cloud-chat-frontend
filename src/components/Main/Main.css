@@ -1,0 +1,147 @@
+.main{
+    flex:1;
+    min-height: 100vh;
+    display: relative;
+    background-color: #000000;
+}
+
+.main .nav{
+    display: flex;
+    justify-content: space-between;
+    font-size: 22px;
+    padding: 14px;
+    color: #ffffff;
+}
+
+.main .nav img{
+    width: 50px;
+    border-radius: 50%;
+}
+
+.main-container{
+    max-width: 900px;
+    margin: auto;
+}
+
+.main .greet{
+    margin: 50px 0px 25px 0px;
+    font-size: 56px;
+    color: #c4c7c5;
+    font-weight: 500;
+    padding: 20px;
+}
+
+.main .greet span{
+    background: -webkit-linear-gradient(16deg, #840481, #05bb0f);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;;
+}
+
+.main .cards{
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 15px;
+    padding: 20px;
+}
+
+.main .card {
+    height: 160px;
+    padding: 15px;
+    background-color: #1a1a1a;
+    border-radius: 10px;
+    position: relative;
+    cursor: pointer;
+}
+
+.main .card svg{
+    width: 35px;
+    padding: 5px;
+    position: absolute;
+    background-color: transparent;
+    bottom: 10px;
+    right: 10px;
+}
+
+.main .card p{
+    color: #ffffff;
+    font-size: 17px;
+}
+
+.main .card:hover{
+    background-color: #333333;
+}
+
+.main .bottom{
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    max-width: 900px;
+    padding: 0px 20px;
+    margin: auto;
+}
+
+.search-box{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap:20px;
+    background-color: #1a1a1a;
+    padding: 10px 20px;
+    border-radius: 50px;
+}
+
+.search-box svg{
+    width: 24px;
+    cursor: pointer;
+    margin: 5px;
+}
+
+.search-box input{
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    padding: 8px;
+    font-size: 18px;
+    color: #ffffff;
+}
+.bottom p{
+    font-size: 13px;
+    margin: 15px auto;
+    text-align: center;
+    font-weight: 300;
+}
+
+.result{
+    padding: 0px 5%;
+    max-height: 70vh;
+    overflow-y: scroll;
+}
+
+.result::-webkit-scrollbar{
+    display: none;
+}
+
+.result-title{
+    margin: 40px 0px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.result img{
+    width: 40px;
+    border-radius: 50%;
+}
+
+.result-data{
+    display: flex;
+    align-items: start;
+    gap: 20px;
+}
+
+.result-data p{
+    font-size: 17px;
+    font-weight: 300;
+    line-height: 1.8;
+}
