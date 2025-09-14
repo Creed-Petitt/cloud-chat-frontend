@@ -1,4 +1,4 @@
-import { createContext, useState, useEffect } from "react";
+import { createContext, useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import { useAuth } from "./AuthContext"; 
 
@@ -6,7 +6,9 @@ import { useAuth } from "./AuthContext";
 export const Context = createContext();
 
 const ContextProvider = ({ children }) => {
-    const { currentUser } = useAuth(); 
+    const { currentUser } = useAuth();
+
+    const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080'; 
 
     const [input, setInput] = useState("");
     const [recentPrompt, setRecentPrompt] = useState("");
@@ -25,6 +27,20 @@ const ContextProvider = ({ children }) => {
         }, 75 * index);
     };
 
+    const loadConversations = useCallback(async () => {
+        if (!currentUser) return;
+        
+        try {
+            const token = await currentUser.getIdToken();
+            const response = await axios.get(`${API_BASE_URL}/api/conversations`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            setConversations(response.data);
+        } catch (error) {
+            console.error('Error loading conversations:', error);
+        }
+    }, [currentUser, API_BASE_URL]);
+
     useEffect(() => {
         if (currentUser) {
             loadConversations();
@@ -33,21 +49,7 @@ const ContextProvider = ({ children }) => {
             setCurrentConversation(null);
             setMessages([]);
         }
-    }, [currentUser]);
-
-    const loadConversations = async () => {
-        if (!currentUser) return;
-        
-        try {
-            const token = await currentUser.getIdToken();
-            const response = await axios.get('http://localhost:8080/api/conversations', {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            setConversations(response.data);
-        } catch (error) {
-            console.error('Error loading conversations:', error);
-        }
-    };
+    }, [currentUser, loadConversations]);
 
     const formatMessagesForDisplay = (messages) => {
         if (!messages || messages.length === 0) return "";
@@ -80,7 +82,7 @@ const ContextProvider = ({ children }) => {
 
         try {
             const token = await currentUser.getIdToken();
-            const response = await axios.get(`http://localhost:8080/api/conversations/${conversationId}`, {
+            const response = await axios.get(`${API_BASE_URL}/api/conversations/${conversationId}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             
@@ -129,7 +131,7 @@ const ContextProvider = ({ children }) => {
             const conversationId = currentConversation?.id || 0;
             const model = "gemini";
 
-            const response = await axios.post(`http://localhost:8080/api/conversations/${conversationId}/messages`, {
+            const response = await axios.post(`${API_BASE_URL}/api/conversations/${conversationId}/messages`, {
                 content: input,
                 aiModel: model
             }, { headers });
