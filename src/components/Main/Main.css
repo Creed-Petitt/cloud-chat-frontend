@@ -145,3 +145,38 @@
     font-weight: 300;
     line-height: 1.8;
 }
+
+.conversation-header {
+    margin: 20px 0;
+    padding: 15px 0;
+    border-bottom: 1px solid #333;
+}
+
+.conversation-header h3 {
+    color: #ffffff;
+    font-size: 20px;
+    font-weight: 500;
+    margin: 0;
+}
+
+.conversation-history {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.message {
+    margin: 10px 0;
+}
+
+.message.user .result-title {
+    margin: 20px 0 10px 0;
+}
+
+.message.assistant .result-data {
+    margin: 10px 0 20px 0;
+}
+
+.message + .message {
+    margin-top: 30px;
+}
