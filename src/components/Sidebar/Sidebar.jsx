@@ -1,7 +1,8 @@
 import { MoreVertical, ChevronLast, ChevronFirst, LogOut } from "lucide-react"
 import { IoAdd, IoImagesOutline, IoEllipsisHorizontal } from "react-icons/io5"
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect, useRef, useContext } from "react"
 import { useAuth } from '../../context/AuthContext'
+import { Context } from '../../context/ContextProvider'
 import AuthModal from '../AuthModal/AuthModal'
 import './Sidebar.css'
 
@@ -11,6 +12,7 @@ export default function Sidebar({ onExpandedChange }) {
   const [showUserMenu, setShowUserMenu] = useState(false)
   
   const { currentUser: user, logout: signOut } = useAuth()
+  const { conversations, currentConversation, selectConversation, startNewConversation } = useContext(Context)
   const userMenuRef = useRef(null)
   
   const handleExpandToggle = () => {
@@ -21,28 +23,18 @@ export default function Sidebar({ onExpandedChange }) {
     }
   }
   
-  // Hardcoded recent chats data - more items for scroll testing
-  const recentChats = [
-    { id: 1, title: "What is React and how does it work?", timestamp: "2 hours ago" },
-    { id: 2, title: "How to code a REST API with Node.js", timestamp: "1 day ago" },
-    { id: 3, title: "Best practices for JavaScript development", timestamp: "3 days ago" },
-    { id: 4, title: "JavaScript testing with Jest and React", timestamp: "1 week ago" },
-    { id: 5, title: "Understanding CSS Grid vs Flexbox", timestamp: "1 week ago" },
-    { id: 6, title: "Building responsive web applications", timestamp: "2 weeks ago" },
-    { id: 7, title: "Introduction to TypeScript fundamentals", timestamp: "2 weeks ago" },
-    { id: 8, title: "Database design and normalization", timestamp: "3 weeks ago" },
-    { id: 9, title: "Modern authentication patterns", timestamp: "3 weeks ago" },
-    { id: 10, title: "Performance optimization techniques"},
-    { id: 11, title: "Docker containerization basics"},
-    { id: 12, title: "GraphQL vs REST API comparison"}
-  ]
+  const recentChats = conversations.map(conv => ({
+    id: conv.id,
+    title: conv.title || 'Untitled Chat',
+    timestamp: conv.updatedAt ? new Date(conv.updatedAt).toLocaleDateString() : ''
+  }));
 
   const handleChatClick = (chatId) => {
-    console.log(`Chat ${chatId} clicked`)
+    selectConversation(chatId);
   }
 
   const handleNewChat = () => {
-    console.log('New chat clicked')
+    startNewConversation();
   }
 
   const handleSignOut = async () => {
@@ -149,7 +141,7 @@ export default function Sidebar({ onExpandedChange }) {
                 {recentChats.map((chat) => (
                   <li 
                     key={chat.id}
-                    className="sidebar-chat-item"
+                    className={`sidebar-chat-item ${currentConversation?.id === chat.id ? 'active' : ''}`}
                     onClick={() => handleChatClick(chat.id)}
                   >
                     <div className="sidebar-chat-content">

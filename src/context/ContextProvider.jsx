@@ -1,4 +1,4 @@
-import { createContext, useState } from "react";
+import { createContext, useState, useEffect } from "react";
 import axios from "axios";
 import { useAuth } from "./AuthContext"; 
 
@@ -15,10 +15,101 @@ const ContextProvider = ({ children }) => {
     const [loading, setLoading] = useState(false);
     const [resultData, setResultData] = useState("");
 
+    const [conversations, setConversations] = useState([]);
+    const [currentConversation, setCurrentConversation] = useState(null);
+    const [messages, setMessages] = useState([]);
+
     const delayPara = (index, nextWord) => {
         setTimeout(function () {
             setResultData((prev) => prev + nextWord);
         }, 75 * index);
+    };
+
+    useEffect(() => {
+        if (currentUser) {
+            loadConversations();
+        } else {
+            setConversations([]);
+            setCurrentConversation(null);
+            setMessages([]);
+        }
+    }, [currentUser]);
+
+    const loadConversations = async () => {
+        if (!currentUser) return;
+        
+        try {
+            const token = await currentUser.getIdToken();
+            const response = await axios.get('http://localhost:8080/api/conversations', {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            setConversations(response.data);
+        } catch (error) {
+            console.error('Error loading conversations:', error);
+        }
+    };
+
+    const formatMessagesForDisplay = (messages) => {
+        if (!messages || messages.length === 0) return "";
+        
+        let formattedHtml = "";
+        for (let i = 0; i < messages.length; i++) {
+            const message = messages[i];
+            if (message.type === 'ASSISTANT') {
+                let content = message.content;
+                let responseArray = content.split("**");
+                let formattedContent = "";
+                for (let j = 0; j < responseArray.length; j++) {
+                    if (j % 2 === 0) {
+                        formattedContent += responseArray[j];
+                    } else {
+                        formattedContent += "<b>" + responseArray[j] + "</b>";
+                    }
+                }
+                formattedContent = formattedContent.split("*").join("<br/>");
+                
+                if (i > 0) formattedHtml += "<br/><br/>";
+                formattedHtml += formattedContent;
+            }
+        }
+        return formattedHtml;
+    };
+
+    const selectConversation = async (conversationId) => {
+        if (!currentUser) return;
+
+        try {
+            const token = await currentUser.getIdToken();
+            const response = await axios.get(`http://localhost:8080/api/conversations/${conversationId}`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            
+            setCurrentConversation(response.data.conversation);
+            setMessages(response.data.messages);
+
+            setLoading(true);
+            setShowResult(true);
+            
+            const formattedConversation = formatMessagesForDisplay(response.data.messages);
+            setResultData(formattedConversation);
+            
+            const userMessages = response.data.messages.filter(msg => msg.type === 'USER');
+            if (userMessages.length > 0) {
+                setRecentPrompt(userMessages[userMessages.length - 1].content);
+            }
+            
+            setLoading(false);
+        } catch (error) {
+            console.error('Error loading conversation:', error);
+            setLoading(false);
+        }
+    };
+
+    const startNewConversation = () => {
+        setCurrentConversation(null);
+        setMessages([]);
+        setShowResult(false);
+        setResultData("");
     };
 
     const getChatResponse = async () => {
@@ -35,17 +126,30 @@ const ContextProvider = ({ children }) => {
             }
 
             const headers = token ? { Authorization: `Bearer ${token}` } : {};
-            let model = "gemini";
+            const conversationId = currentConversation?.id || 0;
+            const model = "gemini";
 
-            const response = await axios.get('http://localhost:8080/chat', { 
-                headers: headers, 
-                params: {
-                    model,
-                    prompt: input,
-                },
-            });
+            const response = await axios.post(`http://localhost:8080/api/conversations/${conversationId}/messages`, {
+                content: input,
+                aiModel: model
+            }, { headers });
 
-            let responseArray = response.data.split("**");
+            const { userMessage, aiMessage, conversationId: newConversationId } = response.data;
+            
+            if (!currentConversation) {
+                const newConv = { 
+                    id: newConversationId, 
+                    title: input.slice(0, 50),
+                    aiModel: model 
+                };
+                setCurrentConversation(newConv);
+                
+                loadConversations();
+            }
+
+            setMessages(prev => [...prev, userMessage, aiMessage]);
+
+            let responseArray = aiMessage.content.split("**");
             let newResponse = "";
             for (let i = 0; i < responseArray.length; i++) {
                 if (i % 2 === 0) {
@@ -82,6 +186,13 @@ const ContextProvider = ({ children }) => {
         setLoading,
         resultData,
         setResultData,
+        
+        conversations,
+        currentConversation,
+        messages,
+        loadConversations,
+        selectConversation,
+        startNewConversation,
     };
 
     return (
