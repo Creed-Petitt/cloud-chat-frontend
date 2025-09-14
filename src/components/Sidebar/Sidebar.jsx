@@ -1,10 +1,17 @@
-import { MoreVertical, ChevronLast, ChevronFirst } from "lucide-react"
+import { MoreVertical, ChevronLast, ChevronFirst, LogOut } from "lucide-react"
 import { IoAdd, IoImagesOutline, IoEllipsisHorizontal } from "react-icons/io5"
-import { useState } from "react"
+import { useState, useEffect, useRef } from "react"
+import { useAuth } from '../../context/AuthContext'
+import AuthModal from '../AuthModal/AuthModal'
 import './Sidebar.css'
 
 export default function Sidebar({ onExpandedChange }) {
   const [expanded, setExpanded] = useState(true)
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false)
+  const [showUserMenu, setShowUserMenu] = useState(false)
+  
+  const { currentUser: user, logout: signOut } = useAuth()
+  const userMenuRef = useRef(null)
   
   const handleExpandToggle = () => {
     const newExpanded = !expanded
@@ -37,6 +44,57 @@ export default function Sidebar({ onExpandedChange }) {
   const handleNewChat = () => {
     console.log('New chat clicked')
   }
+
+  const handleSignOut = async () => {
+    try {
+      await signOut()
+      setShowUserMenu(false)
+    } catch (error) {
+      console.error('Sign out error:', error)
+    }
+  }
+
+  const handleUserSectionClick = () => {
+    if (user) {
+      setShowUserMenu(!showUserMenu)
+    } else {
+      setIsAuthModalOpen(true)
+    }
+  }
+
+  const getUserDisplayName = () => {
+    if (!user) return 'Guest'
+    return user.displayName || user.email?.split('@')[0] || 'User'
+  }
+
+  const getUserEmail = () => {
+    return user?.email || 'Not signed in'
+  }
+
+  const getUserAvatar = () => {
+    if (user?.photoURL) {
+      return user.photoURL
+    }
+    
+    const name = getUserDisplayName()
+    return `https://ui-avatars.com/api/?background=c7d2fe&color=3730a3&bold=true&name=${encodeURIComponent(name)}`
+  }
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (userMenuRef.current && !userMenuRef.current.contains(event.target)) {
+        setShowUserMenu(false)
+      }
+    }
+
+    if (showUserMenu) {
+      document.addEventListener('mousedown', handleClickOutside)
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [showUserMenu])
 
   const AetherisLogo = () => (
     <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#ffffff">
@@ -130,19 +188,44 @@ export default function Sidebar({ onExpandedChange }) {
         )}
 
         <div className="sidebar-footer">
-          <img
-            src="https://ui-avatars.com/api/?background=c7d2fe&color=3730a3&bold=true"
-            alt=""
-            className="sidebar-avatar"
-          />
-          <div className={`sidebar-user-info ${expanded ? "expanded" : "collapsed"}`}>
-            <div className="sidebar-user-details">
-              <h4 className="sidebar-user-name">John Doe</h4>
-              <span className="sidebar-user-email">johndoe@gmail.com</span>
+          <div 
+            className="sidebar-user-section"
+            onClick={handleUserSectionClick}
+          >
+            <img
+              src={getUserAvatar()}
+              alt=""
+              className="sidebar-avatar"
+            />
+            <div className={`sidebar-user-info ${expanded ? "expanded" : "collapsed"}`}>
+              <div className="sidebar-user-details">
+                <h4 className="sidebar-user-name">{getUserDisplayName()}</h4>
+                <span className="sidebar-user-email">{getUserEmail()}</span>
+              </div>
+              {user && <MoreVertical size={20} />}
+              {!user && expanded && (
+                <button className="sidebar-signin-button">
+                  Sign In
+                </button>
+              )}
             </div>
-            <MoreVertical size={20} />
           </div>
+          {showUserMenu && user && expanded && (
+            <div className="sidebar-user-menu" ref={userMenuRef}>
+              <button 
+                className="sidebar-user-menu-item"
+                onClick={handleSignOut}
+              >
+                <LogOut size={16} />
+                Sign Out
+              </button>
+            </div>
+          )}
         </div>
+        <AuthModal 
+          isOpen={isAuthModalOpen} 
+          onClose={() => setIsAuthModalOpen(false)} 
+        />
       </nav>
     </aside>
   )
