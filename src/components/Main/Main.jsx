@@ -12,7 +12,7 @@ const Main = () => {
 		<div className="main">
 			<div className="nav">
 				<p>Aetheris</p>
-				<img src='../../../public/user_icon.png' alt="user-icon" />			</div>
+				<img src='/user_icon.png' alt="user-icon" />			</div>
 			<div className="main-container"> 
 				{!showResult ?
 				<>
@@ -41,11 +41,11 @@ const Main = () => {
 				</> : 
 					<div className="result">
 						<div className="result-title">
-							<img src='../../../public/user_icon.png' alt="user-icon" />
+							<img src='/user_icon.png' alt="user-icon" />
 							<p>{recentPrompt}</p>
 						</div>
 						<div className="result-data">
-							<img src='../../../public\gemini.png' alt="gemini" />
+							<img src='/gemini.png' alt="gemini" />
 							{loading}
 							<p dangerouslySetInnerHTML={{__html: resultData}}></p>
 						</div>
