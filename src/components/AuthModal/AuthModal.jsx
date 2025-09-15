@@ -1,136 +1,62 @@
 import { useState } from 'react';
 import { createPortal } from 'react-dom';
-import { X, Mail, Lock, User, Eye, EyeOff } from 'lucide-react';
+import { X } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import './AuthModal.css';
 
 export default function AuthModal({ isOpen, onClose }) {
-  const [isSignUp, setIsSignUp] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
-  const [formData, setFormData] = useState({
-    fullName: '',
-    email: '',
-    password: ''
-  });
-  const [formErrors, setFormErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
 
   const { 
-    signUpWithEmailAndPassword, 
-    signInWithEmailPassword, 
     signInWithGoogle, 
     signInWithGitHub,
     error,
     clearError
   } = useAuth();
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-    
-    if (formErrors[name]) {
-      setFormErrors(prev => ({
-        ...prev,
-        [name]: ''
-      }));
-    }
-  };
-
-  const validateForm = () => {
-    const errors = {};
-    
-    if (isSignUp && !formData.fullName.trim()) {
-      errors.fullName = 'Full name is required';
-    }
-    
-    if (!formData.email.trim()) {
-      errors.email = 'Email is required';
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      errors.email = 'Please enter a valid email address';
-    }
-    
-    if (!formData.password) {
-      errors.password = 'Password is required';
-    } else if (isSignUp && formData.password.length < 6) {
-      errors.password = 'Password must be at least 6 characters long';
-    }
-    
-    return errors;
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    
-    const errors = validateForm();
-    if (Object.keys(errors).length > 0) {
-      setFormErrors(errors);
-      return;
-    }
-
-    setIsLoading(true);
-    setFormErrors({});
-    clearError();
-
-    try {
-      if (isSignUp) {
-        await signUpWithEmailAndPassword(formData.email, formData.password, formData.fullName);
-      } else {
-        await signInWithEmailPassword(formData.email, formData.password);
-      }
-      
-      handleClose();
-    } catch (error) {
-
-      console.error('Authentication error:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   const handleGoogleSignIn = async () => {
+    if (isLoading) return; // Prevent double-clicks
+    
     setIsLoading(true);
     clearError();
     
     try {
-      await signInWithGoogle();
-      handleClose();
+      const result = await signInWithGoogle();
+      if (result) {
+        handleClose();
+      }
     } catch (error) {
       console.error('Google sign in error:', error);
+      // Error is already set in the auth context
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleGitHubSignIn = async () => {
+    if (isLoading) return; // Prevent double-clicks
+    
     setIsLoading(true);
     clearError();
     
     try {
-      await signInWithGitHub();
-      handleClose();
+      const result = await signInWithGitHub();
+      if (result) {
+        handleClose();
+      }
     } catch (error) {
       console.error('GitHub sign in error:', error);
+      // Error is already set in the auth context
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleClose = () => {
-    setFormData({ fullName: '', email: '', password: '' });
-    setFormErrors({});
-    setShowPassword(false);
     clearError();
+    setIsLoading(false);
     onClose();
-  };
-
-
-  const toggleMode = () => {
-    setIsSignUp(!isSignUp);
-    setFormErrors({});
-    clearError();
   };
 
   if (!isOpen) return null;
@@ -149,38 +75,16 @@ export default function AuthModal({ isOpen, onClose }) {
 
         <div className="auth-modal-header">
           <div className="auth-modal-logo">
-            <svg xmlns="http://www.w3.org/2000/svg" height="32px" viewBox="0 -960 960 960" width="32px" fill="#4f46e5">
+            <svg xmlns="http://www.w3.org/2000/svg" height="32px" viewBox="0 -960 960 960" width="32px" fill="#ffffff">
               <path d="M480-80q-134 0-227-93t-93-227v-200q0-122 96-201t224-79q128 0 224 79t96 201v520H480Zm0-80h80q-19-25-29.5-55.5T520-280v-42q-10 1-20 1.5t-20 .5q-67 0-129.5-23.5T240-415v15q0 100 70 170t170 70Zm120-120q0 50 35 85t85 35v-255q-26 26-56 44.5T600-340v60ZM440-560q0-66-45-111t-109-48q-22 24-34 54t-12 65q0 89 72.5 144.5T480-400q95 0 167.5-55.5T720-600q0-35-12-65.5T674-720q-64 2-109 48t-45 112h-80Zm-100 0q-17 0-28.5-11.5T300-600q0-17 11.5-28.5T340-640q17 0 28.5 11.5T380-600q0 17-11.5 28.5T340-560Zm280 0q-17 0-28.5-11.5T580-600q0-17 11.5-28.5T620-640q17 0 28.5 11.5T660-600q0 17-11.5 28.5T620-560ZM370-778q34 14 62 37t48 52q20-29 47.5-52t61.5-37q-25-11-52.5-16.5T480-800q-29 0-56.5 5.5T370-778Zm430 618H520h280Zm-320 0q-100 0-170-70t-70-170q0 100 70 170t170 70h80-80Zm120-120q0 50 35 85t85 35q-50 0-85-35t-35-85ZM480-689Z"/>
             </svg>
           </div>
           <h2 className="auth-modal-title">
-            {isSignUp ? 'Create your account' : 'Welcome back'}
+            Welcome to Aetherius
           </h2>
           <p className="auth-modal-description">
-            {isSignUp 
-              ? 'Join thousands of users who trust our AI assistant'
-              : 'Sign in to continue your conversations'
-            }
+            Choose your preferred sign-in method to continue
           </p>
-        </div>
-
-        <div className="auth-modal-toggle">
-          <button
-            type="button"
-            className={`auth-toggle-button ${!isSignUp ? 'active' : ''}`}
-            onClick={() => !isSignUp || toggleMode()}
-            disabled={isLoading}
-          >
-            Sign In
-          </button>
-          <button
-            type="button"
-            className={`auth-toggle-button ${isSignUp ? 'active' : ''}`}
-            onClick={() => isSignUp || toggleMode()}
-            disabled={isLoading}
-          >
-            Sign Up
-          </button>
         </div>
 
         {error && (
@@ -188,103 +92,6 @@ export default function AuthModal({ isOpen, onClose }) {
             {error}
           </div>
         )}
-
-        <form onSubmit={handleSubmit} className="auth-modal-form">
-          {isSignUp && (
-            <div className="auth-form-field">
-              <label htmlFor="fullName" className="auth-form-label">
-                Full Name
-              </label>
-              <div className="auth-input-container">
-                <User className="auth-input-icon" size={16} />
-                <input
-                  id="fullName"
-                  name="fullName"
-                  type="text"
-                  value={formData.fullName}
-                  onChange={handleInputChange}
-                  className={`auth-form-input ${formErrors.fullName ? 'error' : ''}`}
-                  placeholder="Enter your full name"
-                  disabled={isLoading}
-                />
-              </div>
-              {formErrors.fullName && (
-                <span className="auth-form-error">{formErrors.fullName}</span>
-              )}
-            </div>
-          )}
-
-          <div className="auth-form-field">
-            <label htmlFor="email" className="auth-form-label">
-              Email Address
-            </label>
-            <div className="auth-input-container">
-              <Mail className="auth-input-icon" size={16} />
-              <input
-                id="email"
-                name="email"
-                type="email"
-                value={formData.email}
-                onChange={handleInputChange}
-                className={`auth-form-input ${formErrors.email ? 'error' : ''}`}
-                placeholder="Enter your email"
-                disabled={isLoading}
-              />
-            </div>
-            {formErrors.email && (
-              <span className="auth-form-error">{formErrors.email}</span>
-            )}
-          </div>
-
-          <div className="auth-form-field">
-            <label htmlFor="password" className="auth-form-label">
-              Password
-            </label>
-            <div className="auth-input-container">
-              <Lock className="auth-input-icon" size={16} />
-              <input
-                id="password"
-                name="password"
-                type={showPassword ? 'text' : 'password'}
-                value={formData.password}
-                onChange={handleInputChange}
-                className={`auth-form-input ${formErrors.password ? 'error' : ''}`}
-                placeholder={isSignUp ? 'Create a password (min. 6 characters)' : 'Enter your password'}
-                disabled={isLoading}
-              />
-              <button
-                type="button"
-                className="auth-password-toggle"
-                onClick={() => setShowPassword(!showPassword)}
-                disabled={isLoading}
-              >
-                {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-              </button>
-            </div>
-            {formErrors.password && (
-              <span className="auth-form-error">{formErrors.password}</span>
-            )}
-          </div>
-
-          <button
-            type="submit"
-            className="auth-submit-button"
-            disabled={isLoading}
-          >
-            {isLoading ? (
-              <div className="auth-loading-spinner">
-                <div className="spinner"></div>
-                {isSignUp ? 'Creating Account...' : 'Signing In...'}
-              </div>
-            ) : (
-              isSignUp ? 'Create Account' : 'Sign In'
-            )}
-          </button>
-        </form>
-
-        <div className="auth-divider">
-          <span>Or continue with</span>
-        </div>
 
         <div className="auth-providers">
           <button
