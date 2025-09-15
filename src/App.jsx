@@ -9,8 +9,8 @@ const App = () => {
 		<div style={{ display: 'flex' }}>
 			<Sidebar onExpandedChange={setSidebarExpanded} />
 			<div style={{ 
-				marginLeft: sidebarExpanded ? '260px' : '48px', 
-				width: sidebarExpanded ? 'calc(100vw - 260px)' : 'calc(100vw - 48px)', 
+				marginLeft: sidebarExpanded ? '260px' : '64px', 
+				width: sidebarExpanded ? 'calc(100vw - 260px)' : 'calc(100vw - 64px)', 
 				height: '100vh',
 				transition: 'margin-left 0.3s ease, width 0.3s ease'
 			}}>
