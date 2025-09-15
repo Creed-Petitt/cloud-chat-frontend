@@ -110,26 +110,34 @@ export default function Sidebar({ onExpandedChange }) {
           </button>
         </div>
 
-        {expanded ? (
-          <div className="sidebar-content">
-
-            <button 
-              onClick={handleNewChat}
-              className="sidebar-new-chat-btn expanded"
-            >
-              <IoAdd size={20} />
-              <span className="sidebar-new-chat-text expanded">
+        <div className="sidebar-content">
+          <button 
+            onClick={handleNewChat}
+            className={`sidebar-action-btn ${expanded ? 'expanded' : 'collapsed'}`}
+          >
+            <IoAdd size={20} />
+            <span className={`sidebar-action-text ${expanded ? 'expanded' : 'collapsed'}`}>
+              New Chat
+            </span>
+            {!expanded && (
+              <div className="sidebar-item-tooltip">
                 New Chat
-              </span>
-            </button>
+              </div>
+            )}
+          </button>
 
-            <button className="sidebar-new-chat-btn expanded">
-              <IoImagesOutline size={20} />
-              <span className="sidebar-new-chat-text expanded">
+          <button className={`sidebar-action-btn ${expanded ? 'expanded' : 'collapsed'}`}>
+            <IoImagesOutline size={20} />
+            <span className={`sidebar-action-text ${expanded ? 'expanded' : 'collapsed'}`}>
+              Images
+            </span>
+            {!expanded && (
+              <div className="sidebar-item-tooltip">
                 Images
-              </span>
-            </button>
-
+              </div>
+            )}
+          </button>
+          {expanded && (
             <div className="sidebar-section">
               <div className="sidebar-section-header expanded recents-header">
                 <span className="sidebar-section-title expanded">
@@ -156,28 +164,8 @@ export default function Sidebar({ onExpandedChange }) {
                 ))}
               </ul>
             </div>
-          </div>
-        ) : (
-          <div className="sidebar-collapsed-icons">
-
-            <button 
-              onClick={handleNewChat}
-              className="sidebar-collapsed-icon"
-            >
-              <IoAdd size={20} />
-              <div className="sidebar-item-tooltip">
-                New Chat
-              </div>
-            </button>
-
-            <div className="sidebar-collapsed-icon">
-              <IoImagesOutline size={20} />
-              <div className="sidebar-item-tooltip">
-                Images
-              </div>
-            </div>
-          </div>
-        )}
+          )}
+        </div>
 
         <div className="sidebar-footer">
           <div 

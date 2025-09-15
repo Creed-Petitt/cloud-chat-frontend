@@ -60,8 +60,8 @@
 
 .sidebar-brand-text {
   font-size: 1.25rem;
-  font-weight: 700;
-  color: #ffffff;
+  font-weight: 500;
+  color: #b8b8b8;
   overflow: hidden;
   transition: all 0.3s ease;
 }
@@ -100,9 +100,13 @@
   padding: 0 0.5rem;
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  gap: 0;
   overflow: hidden;
   min-height: 0;
+}
+
+.sidebar.collapsed .sidebar-content {
+  padding: 1rem 0.5rem;
 }
 
 
@@ -137,11 +141,13 @@
   height: 2rem;
   border-radius: 50%;
   flex-shrink: 0;
+  object-fit: cover;
 }
 
 .sidebar.collapsed .sidebar-avatar {
   width: 32px;
   height: 32px;
+  object-fit: cover;
 }
 
 
@@ -170,16 +176,17 @@
 }
 
 .sidebar-user-name {
-  font-weight: 600;
+  font-weight: 400;
   font-size: 0.875rem;
   margin: 0 0 0.125rem 0;
-  color: #ffffff;
+  color: #b8b8b8;
 }
 
 .sidebar-user-email {
   font-size: 0.75rem;
-  color: #cccccc;
+  color: #999999;
   margin: 0;
+  font-weight: 300;
 }
 
 /* Sign in button */
@@ -305,45 +312,6 @@
   top: 0.5rem;
 }
 
-.sidebar-collapsed-icons {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 1rem 0;
-  flex: 1;
-}
-
-.sidebar-collapsed-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
-  border-radius: 0.5rem;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-  position: relative;
-  color: #ffffff;
-  border: none;
-  background: none;
-  outline: none;
-}
-
-.sidebar-collapsed-icon:hover {
-  background-color: #333333;
-}
-
-.sidebar-collapsed-icon:focus {
-  outline: none;
-  box-shadow: none;
-}
-
-.sidebar-collapsed-icon:hover .sidebar-item-tooltip {
-  visibility: visible;
-  opacity: 1;
-  transform: translateX(0);
-}
 
 .sidebar-item-tooltip {
   position: absolute;
@@ -375,15 +343,18 @@
 .sidebar-item svg,
 .sidebar-toggle svg,
 .sidebar-footer svg,
-.sidebar-new-chat-btn svg,
-.sidebar-collapsed-icon svg {
+.sidebar-action-btn svg {
   flex-shrink: 0;
   width: 20px !important;
   height: 20px !important;
 }
 
-.sidebar-new-chat-btn {
-  display: block;
+.sidebar-action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+  height: 44px;
   padding: 0;
   border: none;
   border-radius: 0.5rem;
@@ -394,50 +365,58 @@
   color: #ffffff;
   position: relative;
   outline: none;
-  height: 44px;
-  width: 100%;
+  margin-bottom: 0.25rem;
 }
 
-.sidebar-new-chat-btn svg {
+.sidebar-action-btn svg {
   position: absolute;
   left: 12px;
-  top: 12px;
+  top: 50%;
+  transform: translateY(-50%);
   width: 20px !important;
   height: 20px !important;
+  flex-shrink: 0;
 }
 
-.sidebar-new-chat-btn:hover {
+.sidebar-action-btn:hover {
   background-color: #333333;
 }
 
-.sidebar-new-chat-btn:focus {
+.sidebar-action-btn:focus {
   outline: none;
   box-shadow: none;
 }
 
-.sidebar-new-chat-btn.collapsed {
-  justify-content: center;
-  padding: 0.75rem;
+.sidebar-action-btn.collapsed {
   width: 36px;
   height: 36px;
+  margin: 0 auto 0.25rem auto;
 }
 
-.sidebar-new-chat-text {
+.sidebar-action-btn.collapsed svg {
+  left: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+.sidebar-action-text {
   position: absolute;
   left: 44px;
   top: 50%;
   transform: translateY(-50%);
   white-space: nowrap;
-  transition: opacity 0.3s ease;
+  transition: all 0.3s ease;
 }
 
-.sidebar-new-chat-text.expanded {
+.sidebar-action-text.expanded {
   opacity: 1;
+  visibility: visible;
 }
 
-.sidebar-new-chat-text.collapsed {
+.sidebar-action-text.collapsed {
   opacity: 0;
+  visibility: hidden;
 }
+
 
 .sidebar-section {
   margin-top: 1rem;
@@ -456,16 +435,16 @@
   display: flex;
   align-items: center;
   padding: 0.5rem;
-  color: #ffffff;
+  color: #b8b8b8;
   font-size: 0.875rem;
-  font-weight: 500;
+  font-weight: 400;
   cursor: pointer;
   position: relative;
   transition: all 0.2s ease;
 }
 
 .sidebar-section-header:hover {
-  color: #ffffff;
+  color: #d0d0d0;
   background-color: #333333;
   border-radius: 0.25rem;
 }
@@ -493,13 +472,13 @@
 }
 
 .sidebar-section-header.recents-header {
-  color: #cccccc;
+  color: #999999;
   font-size: 0.75rem;
-  font-weight: 400;
+  font-weight: 300;
 }
 
 .sidebar-section-header.recents-header:hover {
-  color: #ffffff;
+  color: #d0d0d0;
   background-color: #333333;
   border-radius: 0.25rem;
 }
@@ -586,8 +565,8 @@
 
 .sidebar-chat-title {
   font-size: 0.875rem;
-  color: #ffffff;
-  font-weight: 500;
+  color: #b8b8b8;
+  font-weight: 400;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -595,7 +574,8 @@
 
 .sidebar-chat-timestamp {
   font-size: 0.75rem;
-  color: #cccccc;
+  color: #999999;
+  font-weight: 300;
 }
 
 .sidebar-chat-menu {
