@@ -98,9 +98,11 @@ export default function Sidebar({ onExpandedChange }) {
     <aside className={`sidebar ${expanded ? "" : "collapsed"}`}>
       <nav className="sidebar-nav">
 
-        <div className={`sidebar-header ${expanded ? "" : "collapsed"}`}>
+        <div className={`sidebar-header`}>
           <div className={`sidebar-brand ${expanded ? "expanded" : "collapsed"}`}>
-            <AetherisLogo />
+            <div style={{ paddingLeft: '4px'}}>
+              <AetherisLogo />
+            </div>
           </div>
           <button
             onClick={handleExpandToggle}
@@ -113,7 +115,7 @@ export default function Sidebar({ onExpandedChange }) {
         <div className="sidebar-content">
           <button 
             onClick={handleNewChat}
-            className={`sidebar-action-btn ${expanded ? 'expanded' : 'collapsed'}`}
+            className={`sidebar-action-btn`}
           >
             <IoAdd size={20} />
             <span className={`sidebar-action-text ${expanded ? 'expanded' : 'collapsed'}`}>
@@ -126,7 +128,7 @@ export default function Sidebar({ onExpandedChange }) {
             )}
           </button>
 
-          <button className={`sidebar-action-btn ${expanded ? 'expanded' : 'collapsed'}`}>
+          <button className={`sidebar-action-btn`}>
             <IoImagesOutline size={20} />
             <span className={`sidebar-action-text ${expanded ? 'expanded' : 'collapsed'}`}>
               Images
