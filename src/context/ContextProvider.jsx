@@ -20,6 +20,7 @@ const ContextProvider = ({ children }) => {
     const [conversations, setConversations] = useState([]);
     const [currentConversation, setCurrentConversation] = useState(null);
     const [messages, setMessages] = useState([]);
+    const [currentModel, setCurrentModel] = useState("gemini"); // Default to Gemini
 
     const delayPara = (index, nextWord) => {
         setTimeout(function () {
@@ -114,12 +115,19 @@ const ContextProvider = ({ children }) => {
         setResultData("");
     };
 
-    const getChatResponse = async () => {
+    const getChatResponse = async (promptText = null) => {
+        const messageContent = promptText || input;
+        
+        if (!messageContent.trim()) {
+            console.error('No message content provided');
+            return;
+        }
+
         setResultData("");
         setLoading(true);
         setShowResult(true);
-        setRecentPrompt(input);
-        setPrevPrompts((prev) => [...prev, input]);
+        setRecentPrompt(messageContent);
+        setPrevPrompts((prev) => [...prev, messageContent]);
 
         try {
             let token = null;
@@ -129,10 +137,17 @@ const ContextProvider = ({ children }) => {
 
             const headers = token ? { Authorization: `Bearer ${token}` } : {};
             const conversationId = currentConversation?.id || 0;
-            const model = "gemini";
+            const model = currentModel;
+
+            console.log('Sending request:', {
+                url: `${API_BASE_URL}/api/conversations/${conversationId}/messages`,
+                content: messageContent,
+                aiModel: model,
+                hasAuth: !!token
+            });
 
             const response = await axios.post(`${API_BASE_URL}/api/conversations/${conversationId}/messages`, {
-                content: input,
+                content: messageContent,
                 aiModel: model
             }, { headers });
 
@@ -141,7 +156,7 @@ const ContextProvider = ({ children }) => {
             if (!currentConversation) {
                 const newConv = { 
                     id: newConversationId, 
-                    title: input.slice(0, 50),
+                    title: input.slice(0, 50) + '...',
                     aiModel: model 
                 };
                 setCurrentConversation(newConv);
@@ -171,7 +186,11 @@ const ContextProvider = ({ children }) => {
             setResultData("Sorry, I encountered an error. Please try again.");
         }
         setLoading(false);
-        setInput("");
+        
+        // Only clear input if we used the current input state (not a passed prompt)
+        if (!promptText) {
+            setInput("");
+        }
     };
 
     const contextValue = {
@@ -195,6 +214,9 @@ const ContextProvider = ({ children }) => {
         loadConversations,
         selectConversation,
         startNewConversation,
+        
+        currentModel,
+        setCurrentModel,
     };
 
     return (
