@@ -1,6 +1,7 @@
 import { createContext, useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import { useAuth } from "./AuthContext"; 
+import { formatMessageContent } from "../utils/textFormatter";
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const Context = createContext();
@@ -20,7 +21,7 @@ const ContextProvider = ({ children }) => {
     const [conversations, setConversations] = useState([]);
     const [currentConversation, setCurrentConversation] = useState(null);
     const [messages, setMessages] = useState([]);
-    const [currentModel, setCurrentModel] = useState("gemini"); // Default to Gemini
+    const [currentModel, setCurrentModel] = useState("gemini");
 
     const delayPara = (index, nextWord) => {
         setTimeout(function () {
@@ -59,17 +60,7 @@ const ContextProvider = ({ children }) => {
         for (let i = 0; i < messages.length; i++) {
             const message = messages[i];
             if (message.type === 'ASSISTANT') {
-                let content = message.content;
-                let responseArray = content.split("**");
-                let formattedContent = "";
-                for (let j = 0; j < responseArray.length; j++) {
-                    if (j % 2 === 0) {
-                        formattedContent += responseArray[j];
-                    } else {
-                        formattedContent += "<b>" + responseArray[j] + "</b>";
-                    }
-                }
-                formattedContent = formattedContent.split("*").join("<br/>");
+                const formattedContent = formatMessageContent(message.content);
                 
                 if (i > 0) formattedHtml += "<br/><br/>";
                 formattedHtml += formattedContent;
@@ -166,16 +157,7 @@ const ContextProvider = ({ children }) => {
 
             setMessages(prev => [...prev, userMessage, aiMessage]);
 
-            let responseArray = aiMessage.content.split("**");
-            let newResponse = "";
-            for (let i = 0; i < responseArray.length; i++) {
-                if (i % 2 === 0) {
-                    newResponse += responseArray[i];
-                } else {
-                    newResponse += "<b>" + responseArray[i] + "</b>";
-                }
-            }
-            let typedResponse = newResponse.split("*").join("<br/>");
+            let typedResponse = formatMessageContent(aiMessage.content);
             let typedResponseArray = typedResponse.split(" ");
             for (let i = 0; i < typedResponseArray.length; i++) {
                 const nextWord = typedResponseArray[i];
