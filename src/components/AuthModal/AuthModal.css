@@ -50,14 +50,14 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #666666;
+  color: #6b7280;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .auth-modal-close:hover {
-  background-color: #f0f0f0;
-  color: #333333;
+  background-color: #f3f4f6;
+  color: #374151;
 }
 
 .auth-modal-close:disabled {
@@ -79,13 +79,13 @@
 .auth-modal-title {
   font-size: 24px;
   font-weight: 700;
-  color: #000000;
+  color: #111827;
   margin: 0 0 8px 0;
   line-height: 1.2;
 }
 
 .auth-modal-description {
-  color: #666666;
+  color: #6b7280;
   font-size: 14px;
   line-height: 1.5;
   margin: 0;
@@ -93,7 +93,7 @@
 
 .auth-modal-toggle {
   display: flex;
-  background-color: #f0f0f0;
+  background-color: #f3f4f6;
   border-radius: 8px;
   padding: 4px;
   margin-bottom: 24px;
@@ -109,17 +109,17 @@
   cursor: pointer;
   transition: all 0.2s ease;
   background: transparent;
-  color: #666666;
+  color: #6b7280;
 }
 
 .auth-toggle-button.active {
   background: white;
-  color: #000000;
+  color: #111827;
   box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
 }
 
 .auth-toggle-button:hover:not(.active) {
-  color: #333333;
+  color: #374151;
 }
 
 .auth-toggle-button:disabled {
@@ -150,7 +150,7 @@
   display: block;
   font-size: 14px;
   font-weight: 500;
-  color: #333333;
+  color: #374151;
   margin-bottom: 6px;
 }
 
@@ -163,14 +163,14 @@
 .auth-input-icon {
   position: absolute;
   left: 12px;
-  color: #999999;
+  color: #9ca3af;
   z-index: 1;
 }
 
 .auth-form-input {
   width: 100%;
   padding: 12px 16px 12px 40px;
-  border: 1px solid #cccccc;
+  border: 1px solid #d1d5db;
   border-radius: 8px;
   font-size: 14px;
   transition: all 0.2s ease;
@@ -193,8 +193,8 @@
 }
 
 .auth-form-input:disabled {
-  background-color: #f5f5f5;
-  color: #666666;
+  background-color: #f9fafb;
+  color: #6b7280;
   cursor: not-allowed;
 }
 
@@ -203,7 +203,7 @@
   right: 12px;
   background: none;
   border: none;
-  color: #999999;
+  color: #9ca3af;
   cursor: pointer;
   padding: 4px;
   border-radius: 4px;
@@ -211,7 +211,7 @@
 }
 
 .auth-password-toggle:hover {
-  color: #666666;
+  color: #6b7280;
 }
 
 .auth-password-toggle:disabled {
@@ -244,11 +244,11 @@
 }
 
 .auth-submit-button:hover:not(:disabled) {
-  background-color: #333333;
+  background-color: #9994cf;
 }
 
 .auth-submit-button:disabled {
-  background-color: #999999;
+  background-color: #9ca3af;
   cursor: not-allowed;
 }
 
@@ -286,12 +286,12 @@
   left: 0;
   right: 0;
   height: 1px;
-  background-color: #e0e0e0;
+  background-color: #e5e7eb;
 }
 
 .auth-divider span {
   background: white;
-  color: #999999;
+  color: #9ca3af;
   font-size: 12px;
   padding: 0 16px;
   position: relative;
@@ -307,9 +307,9 @@
 
 .auth-provider-button {
   width: 100%;
-  border: 1px solid #cccccc;
+  border: 1px solid #d1d5db;
   background: white;
-  color: #333333;
+  color: #374151;
   border-radius: 8px;
   padding: 12px 16px;
   font-size: 14px;
@@ -323,8 +323,8 @@
 }
 
 .auth-provider-button:hover:not(:disabled) {
-  background-color: #f5f5f5;
-  border-color: #999999;
+  background-color: #f9fafb;
+  border-color: #9ca3af;
 }
 
 .auth-provider-button:disabled {
@@ -341,12 +341,12 @@
 .auth-modal-footer {
   text-align: center;
   font-size: 12px;
-  color: #ffffff;
+  color: #6b7280;
   line-height: 1.5;
 }
 
 .auth-link {
-  color: #ffffff;
+  color: #000000;
   text-decoration: none;
   font-weight: 500;
 }
@@ -382,38 +382,38 @@
 
 @media (prefers-color-scheme: dark) {
   .auth-modal-content {
-    background: #222222;
+    background: #1f2937;
   }
 
   .auth-modal-title {
-    color: #ffffff;
+    color: #f9fafb;
   }
 
   .auth-modal-description {
-    color: #cccccc;
+    color: #9ca3af;
   }
 
   .auth-modal-toggle {
-    background-color: #444444;
+    background-color: #374151;
   }
 
   .auth-toggle-button {
-    color: #cccccc;
+    color: #9ca3af;
   }
 
   .auth-toggle-button.active {
-    background: #555555;
-    color: #ffffff;
+    background: #4b5563;
+    color: #f9fafb;
   }
 
   .auth-form-label {
-    color: #eeeeee;
+    color: #d1d5db;
   }
 
   .auth-form-input {
-    background: #444444;
-    border-color: #666666;
-    color: #ffffff;
+    background: #374151;
+    border-color: #4b5563;
+    color: #f9fafb;
   }
 
   .auth-form-input:focus {
@@ -421,24 +421,24 @@
   }
 
   .auth-provider-button {
-    background: #444444;
-    border-color: #666666;
-    color: #eeeeee;
+    background: #374151;
+    border-color: #4b5563;
+    color: #d1d5db;
   }
 
   .auth-provider-button:hover:not(:disabled) {
-    background-color: #555555;
+    background-color: #4b5563;
   }
 
   .auth-divider::before {
-    background-color: #666666;
+    background-color: #4b5563;
   }
 
   .auth-divider span {
-    background: #222222;
+    background: #1f2937;
   }
 
   .auth-modal-footer {
-    color: #cccccc;
+    color: #9ca3af;
   }
 }

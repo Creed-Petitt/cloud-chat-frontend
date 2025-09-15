@@ -16,7 +16,7 @@ export default function AuthModal({ isOpen, onClose }) {
 
 
   const handleGoogleSignIn = async () => {
-    if (isLoading) return; // Prevent double-clicks
+    if (isLoading) return;
     
     setIsLoading(true);
     clearError();
@@ -28,14 +28,14 @@ export default function AuthModal({ isOpen, onClose }) {
       }
     } catch (error) {
       console.error('Google sign in error:', error);
-      // Error is already set in the auth context
+      
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleGitHubSignIn = async () => {
-    if (isLoading) return; // Prevent double-clicks
+    if (isLoading) return; 
     
     setIsLoading(true);
     clearError();
@@ -47,7 +47,7 @@ export default function AuthModal({ isOpen, onClose }) {
       }
     } catch (error) {
       console.error('GitHub sign in error:', error);
-      // Error is already set in the auth context
+      
     } finally {
       setIsLoading(false);
     }
