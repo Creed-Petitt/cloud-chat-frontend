@@ -15,10 +15,6 @@ const firebaseConfig = {
   measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
 };
 
-// Add environment validation
-if (!firebaseConfig.apiKey || !firebaseConfig.projectId) {
-  throw new Error('Firebase configuration is missing required environment variables');
-}
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
