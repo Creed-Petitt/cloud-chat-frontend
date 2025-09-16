@@ -1,5 +1,6 @@
 import { MoreVertical, ChevronLast, ChevronFirst, LogOut } from "lucide-react"
 import { IoAdd, IoImagesOutline, IoEllipsisHorizontal } from "react-icons/io5"
+import { HiPlus, HiPhoto } from "react-icons/hi2"
 import { useState, useEffect, useRef, useContext } from "react"
 import { useAuth } from '../../context/AuthContext'
 import { Context } from '../../context/ContextProvider'
@@ -89,9 +90,7 @@ export default function Sidebar({ onExpandedChange }) {
   }, [showUserMenu])
 
   const AetherisLogo = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#ffffff">
-      <path d="M480-80q-134 0-227-93t-93-227v-200q0-122 96-201t224-79q128 0 224 79t96 201v520H480Zm0-80h80q-19-25-29.5-55.5T520-280v-42q-10 1-20 1.5t-20 .5q-67 0-129.5-23.5T240-415v15q0 100 70 170t170 70Zm120-120q0 50 35 85t85 35v-255q-26 26-56 44.5T600-340v60ZM440-560q0-66-45-111t-109-48q-22 24-34 54t-12 65q0 89 72.5 144.5T480-400q95 0 167.5-55.5T720-600q0-35-12-65.5T674-720q-64 2-109 48t-45 112h-80Zm-100 0q-17 0-28.5-11.5T300-600q0-17 11.5-28.5T340-640q17 0 28.5 11.5T380-600q0 17-11.5 28.5T340-560Zm280 0q-17 0-28.5-11.5T580-600q0-17 11.5-28.5T620-640q17 0 28.5 11.5T660-600q0 17-11.5 28.5T620-560ZM370-778q34 14 62 37t48 52q20-29 47.5-52t61.5-37q-25-11-52.5-16.5T480-800q-29 0-56.5 5.5T370-778Zm430 618H520h280Zm-320 0q-100 0-170-70t-70-170q0 100 70 170t170 70h80-80Zm120-120q0 50 35 85t85 35q-50 0-85-35t-35-85ZM480-689Z"/>
-    </svg>
+    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M449-539q21 0 35.5-14.5T499-589q0-21-14.5-35.5T449-639q-21 0-35.5 14.5T399-589q0 21 14.5 35.5T449-539ZM822-80q-42 0-113-35t-152-95q-19 5-38.5 7.5T479-200q-117 0-198-81t-81-198q0-20 3-40t8-39q-59-81-94.5-151.5T81-822q0-27 15-42.5t41-15.5q26 0 67.5 18T319-801q-21 11-39 23t-35 26q-19-11-37-19t-38-17q18 38 38.5 74t43.5 71q38-54 97-85t130-31q117 0 198.5 81.5T759-479q0 71-31.5 130T642-252q35 23 71.5 44t74.5 38q-8-19-16.5-37T752-244q15-17 27-36t22-39q46 78 62.5 116.5T880-138q0 29-16 43.5T822-80ZM549-359q17 0 28.5-11.5T589-399q0-17-11.5-28.5T549-439q-17 0-28.5 11.5T509-399q0 17 11.5 28.5T549-359Zm50-140q13 0 21.5-8.5T629-529q0-13-8.5-21.5T599-559q-13 0-21.5 8.5T569-529q0 13 8.5 21.5T599-499ZM468-281q-51-44-98-91t-90-98q2 38 17 71.5t41 59.5q26 26 59 41t71 17Zm103-21q48-25 78-72.5T679-480q0-83-58.5-141T479-679q-58 0-105 30t-72 78q57 76 125 144t144 125Zm-197-73Zm117-116Z"/></svg>
   )
   
   return (
@@ -117,7 +116,7 @@ export default function Sidebar({ onExpandedChange }) {
             onClick={handleNewChat}
             className={`sidebar-action-btn`}
           >
-            <IoAdd size={20} />
+            <HiPlus size={20} />
             <span className={`sidebar-action-text ${expanded ? 'expanded' : 'collapsed'}`}>
               New Chat
             </span>
@@ -129,7 +128,7 @@ export default function Sidebar({ onExpandedChange }) {
           </button>
 
           <button className={`sidebar-action-btn`}>
-            <IoImagesOutline size={20} />
+            <HiPhoto size={20} />
             <span className={`sidebar-action-text ${expanded ? 'expanded' : 'collapsed'}`}>
               Images
             </span>

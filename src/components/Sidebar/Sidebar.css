@@ -28,8 +28,9 @@
   align-items: center;
 }
 
-.sidebar-header.collapsed {
-  padding: 1rem 0.75rem 0.5rem 0.75rem;
+.sidebar.collapsed .sidebar-header {
+  padding: 1rem 0.5rem 0.5rem 0.5rem;
+  justify-content: center;
 }
 
 .sidebar-brand {
@@ -89,12 +90,16 @@
 
 .sidebar-content {
   flex: 1;
-  padding: 0 0.75rem;
+  padding: 1rem 0.75rem 0 0.75rem;
   display: flex;
   flex-direction: column;
   gap: 0;
   overflow: hidden;
   min-height: 0;
+}
+
+.sidebar.collapsed .sidebar-content {
+  padding: 1rem 0.75rem 0 0.75rem;
 }
 
 
@@ -157,17 +162,17 @@
 }
 
 .sidebar-user-name {
-  font-weight: 400;
-  font-size: 0.875rem;
+  font-weight: 500;
+  font-size: 0.9rem;
   margin: 0 0 0.125rem 0;
-  color: #b8b8b8;
+  color: #d0d0d0;
 }
 
 .sidebar-user-email {
-  font-size: 0.75rem;
-  color: #999999;
+  font-size: 0.8rem;
+  color: #b0b0b0;
   margin: 0;
-  font-weight: 300;
+  font-weight: 400;
 }
 
 /* Sign in button */
@@ -334,18 +339,29 @@
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  width: 100%;
-  height: 44px;
-  padding: 0 8px;
+  width: 95%;
+  height: 36px;
+  padding: 0.5rem;
+  padding-left: 0.5rem;
   border: none;
   border-radius: 0.5rem;
   background: none;
   cursor: pointer;
-  transition: background-color 0.2s ease;
-  font-weight: 500;
+  transition: background-color 0.2s ease, width 0s, margin 0s, justify-content 0s;
   color: #ffffff;
   outline: none;
   margin-bottom: 0.5rem;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.sidebar.collapsed .sidebar-action-btn {
+  width: 36px;
+  height: 36px;
+  padding: 0.5rem;
+  padding-left: 0.5rem;
+  margin: 0 0 0.5rem 0;
+  justify-content: flex-start;
 }
 
 .sidebar-action-btn svg {
@@ -363,18 +379,15 @@
   box-shadow: none;
 }
 
-.sidebar-action-btn.collapsed {
-  justify-content: center;
-  width: 36px;
-  height: 36px;
-  padding: 0;
-  margin: 0 auto 0.5rem auto;
-}
 .sidebar-action-text {
   white-space: nowrap;
   transition: all 0.3s ease;
-  margin-left: 12px;
+  margin-left: 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 450;
+  color: #e0e0e0;
 }
+
 
 .sidebar-action-text.expanded {
   opacity: 1;
@@ -440,9 +453,9 @@
 }
 
 .sidebar-section-header.recents-header {
-  color: #999999;
-  font-size: 0.75rem;
-  font-weight: 300;
+  color: #b8b8b8;
+  font-size: 0.8rem;
+  font-weight: 400;
 }
 
 .sidebar-section-header.recents-header:hover {
@@ -532,9 +545,9 @@
 }
 
 .sidebar-chat-title {
-  font-size: 0.875rem;
-  color: #b8b8b8;
-  font-weight: 400;
+  font-size: 0.9rem;
+  color: #d0d0d0;
+  font-weight: 450;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
