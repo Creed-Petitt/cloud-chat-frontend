@@ -1,0 +1,77 @@
+import { useState, useRef, useEffect } from 'react'
+import ModelLogos from '../logos/ModelLogos'
+import './ModelSelector.css'
+
+const ModelSelector = ({ currentModel, setCurrentModel }) => {
+  const [isOpen, setIsOpen] = useState(false)
+  const dropdownRef = useRef(null)
+
+  const models = [
+    { id: 'gemini', name: 'Gemini', logo: ModelLogos.gemini },
+    { id: 'claude', name: 'Claude', logo: ModelLogos.anthropic },
+    { id: 'openai', name: 'OpenAI', logo: ModelLogos.openai }
+  ]
+
+  const currentModelData = models.find(model => model.id === currentModel) || models[0]
+
+  const handleModelSelect = (modelId) => {
+    setCurrentModel(modelId)
+    setIsOpen(false)
+  }
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsOpen(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
+
+  return (
+    <div className="model-selector" ref={dropdownRef}>
+      <button
+        className="model-selector-trigger"
+        onClick={() => setIsOpen(!isOpen)}
+        aria-label={`Current model: ${currentModelData.name}`}
+      >
+        <currentModelData.logo />
+        <span className="model-name">{currentModelData.name}</span>
+        <svg
+          className={`chevron ${isOpen ? 'open' : ''}`}
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+        >
+          <polyline points="6,9 12,15 18,9"></polyline>
+        </svg>
+      </button>
+
+      {isOpen && (
+        <div className="model-selector-dropdown">
+          {models.map((model) => (
+            <button
+              key={model.id}
+              className={`model-option ${model.id === currentModel ? 'active' : ''}`}
+              onClick={() => handleModelSelect(model.id)}
+            >
+              <model.logo />
+              <span>{model.name}</span>
+              {model.id === currentModel && (
+                <svg className="check-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <polyline points="20,6 9,17 4,12"></polyline>
+                </svg>
+              )}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
+export default ModelSelector
