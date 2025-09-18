@@ -1,5 +1,5 @@
 import './Main.css'
-import { useContext } from 'react'
+import { useContext, useRef, useEffect } from 'react'
 import { Context } from '../../context/ContextProvider'
 import { useAuth } from '../../context/AuthContext'
 import { formatMessageContent } from '../../utils/textFormatter'
@@ -7,18 +7,19 @@ import ModelSelector from '../ModelSelector/ModelSelector'
 
 
 const Main = () => {
+	const messagesEndRef = useRef(null);
 
-	const { 
-        loading, 
-        resultData, 
-        input, 
-        setInput, 
-        recentPrompt, 
-        setRecentPrompt, 
-        prevPrompts, 
-        setPrevPrompts, 
-        showResult, 
-        setShowResult, 
+	const {
+        loading,
+        resultData,
+        input,
+        setInput,
+        recentPrompt,
+        setRecentPrompt,
+        prevPrompts,
+        setPrevPrompts,
+        showResult,
+        setShowResult,
         getChatResponse,
         messages,
         currentConversation,
@@ -28,10 +29,25 @@ const Main = () => {
 
 	const { currentUser } = useAuth();
 
+	const scrollToBottom = () => {
+		messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+	};
+
+	useEffect(() => {
+		scrollToBottom();
+	}, [messages, loading]);
+
 	const handleCardClick = (prompt) => {
 		setInput(prompt);
 		// Pass the prompt directly to getChatResponse
 		getChatResponse(prompt);
+	};
+
+	const handleKeyDown = (e) => {
+		if (e.key === 'Enter' && !e.shiftKey && input.trim()) {
+			e.preventDefault();
+			getChatResponse();
+		}
 	};
 
 	const getUserDisplayName = () => {
@@ -123,11 +139,19 @@ const Main = () => {
 								</div>
 							</>
 						)}
+						<div ref={messagesEndRef} />
 					</div>}
 
 				<div className="bottom">
 					<div className="search-box">
-						<input onChange={(e) => setInput(e.target.value)} value={input} type="text" placeholder='Whisper the question you would never dare to ask aloud' className="input" />
+						<input
+							onChange={(e) => setInput(e.target.value)}
+							onKeyDown={handleKeyDown}
+							value={input}
+							type="text"
+							placeholder='Whisper the question you would never dare to ask aloud'
+							className="input"
+						/>
 						<div>
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
