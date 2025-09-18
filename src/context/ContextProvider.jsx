@@ -106,6 +106,30 @@ const ContextProvider = ({ children }) => {
         setResultData("");
     };
 
+    const deleteConversation = async (conversationId) => {
+        if (!currentUser) return;
+
+        try {
+            const token = await currentUser.getIdToken();
+            await axios.delete(`${API_BASE_URL}/api/conversations/${conversationId}`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+
+            // Remove from conversations list
+            setConversations(prev => prev.filter(conv => conv.id !== conversationId));
+
+            // Clear current conversation if it's the one being deleted
+            if (currentConversation?.id === conversationId) {
+                setCurrentConversation(null);
+                setMessages([]);
+                setShowResult(false);
+                setResultData("");
+            }
+        } catch (error) {
+            console.error('Error deleting conversation:', error);
+        }
+    };
+
     const getChatResponse = async (promptText = null) => {
         const messageContent = promptText || input;
         
@@ -119,6 +143,18 @@ const ContextProvider = ({ children }) => {
         setShowResult(true);
         setRecentPrompt(messageContent);
         setPrevPrompts((prev) => [...prev, messageContent]);
+
+        // Add user message immediately to show in conversation
+        const tempUserMessage = {
+            id: Date.now(), // Temporary ID
+            type: 'USER',
+            content: messageContent,
+            timestamp: new Date().toISOString()
+        };
+
+        if (currentConversation) {
+            setMessages(prev => [...prev, tempUserMessage]);
+        }
 
         try {
             let token = null;
@@ -155,7 +191,14 @@ const ContextProvider = ({ children }) => {
                 loadConversations();
             }
 
-            setMessages(prev => [...prev, userMessage, aiMessage]);
+            if (!currentConversation) {
+                setMessages(prev => [...prev, userMessage, aiMessage]);
+            } else {
+                setMessages(prev => {
+                    const withoutTemp = prev.slice(0, -1); 
+                    return [...withoutTemp, userMessage, aiMessage];
+                });
+            }
 
             let typedResponse = formatMessageContent(aiMessage.content);
             let typedResponseArray = typedResponse.split(" ");
@@ -196,6 +239,7 @@ const ContextProvider = ({ children }) => {
         loadConversations,
         selectConversation,
         startNewConversation,
+        deleteConversation,
         
         currentModel,
         setCurrentModel,

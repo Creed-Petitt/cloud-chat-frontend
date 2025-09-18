@@ -1,5 +1,5 @@
 import { MoreVertical, ChevronLast, ChevronFirst, LogOut } from "lucide-react"
-import { IoAdd, IoImagesOutline, IoEllipsisHorizontal } from "react-icons/io5"
+import { IoAdd, IoImagesOutline, IoClose } from "react-icons/io5"
 import { HiPlus, HiPhoto } from "react-icons/hi2"
 import { useState, useEffect, useRef, useContext } from "react"
 import { useAuth } from '../../context/AuthContext'
@@ -13,7 +13,7 @@ export default function Sidebar({ onExpandedChange }) {
   const [showUserMenu, setShowUserMenu] = useState(false)
   
   const { currentUser: user, logout: signOut } = useAuth()
-  const { conversations, currentConversation, selectConversation, startNewConversation } = useContext(Context)
+  const { conversations, currentConversation, selectConversation, startNewConversation, deleteConversation } = useContext(Context)
   const userMenuRef = useRef(null)
   
   const handleExpandToggle = () => {
@@ -36,6 +36,11 @@ export default function Sidebar({ onExpandedChange }) {
 
   const handleNewChat = () => {
     startNewConversation();
+  }
+
+  const handleDeleteChat = (e, chatId) => {
+    e.stopPropagation(); // Prevent selecting the chat when clicking delete
+    deleteConversation(chatId);
   }
 
   const handleSignOut = async () => {
@@ -158,8 +163,11 @@ export default function Sidebar({ onExpandedChange }) {
                         {chat.title.length > 35 ? `${chat.title.substring(0, 35)}...` : chat.title}
                       </span>
                     </div>
-                    <button className="sidebar-chat-menu">
-                      <IoEllipsisHorizontal size={16} />
+                    <button
+                      className="sidebar-chat-menu"
+                      onClick={(e) => handleDeleteChat(e, chat.id)}
+                    >
+                      <IoClose size={16} />
                     </button>
                   </li>
                 ))}
