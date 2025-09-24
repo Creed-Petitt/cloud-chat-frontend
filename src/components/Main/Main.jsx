@@ -15,11 +15,7 @@ const Main = () => {
         input,
         setInput,
         recentPrompt,
-        setRecentPrompt,
-        prevPrompts,
-        setPrevPrompts,
         showResult,
-        setShowResult,
         getChatResponse,
         messages,
         currentConversation,
@@ -66,7 +62,7 @@ const Main = () => {
 	return (
 		<div className="main">
 			<div className="nav">
-				<p>Aethereus</p>
+				<p>CloudChat</p>
 				<ModelSelector currentModel={currentModel} setCurrentModel={setCurrentModel} />
 			</div>
 			<div className="main-container">

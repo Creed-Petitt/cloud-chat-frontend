@@ -80,7 +80,7 @@ export default function AuthModal({ isOpen, onClose }) {
             </svg>
           </div>
           <h2 className="auth-modal-title">
-            Welcome to Aetherius
+            Welcome to CloudChat
           </h2>
           <p className="auth-modal-description">
             Choose your preferred sign-in method to continue
