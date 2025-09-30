@@ -130,7 +130,7 @@ const Main = () => {
 								</div>
 								<div className="ai-message">
 									<div className="message-content">
-										{loading ? <p>Loading...</p> : <p dangerouslySetInnerHTML={{ __html: resultData }}></p>}
+										<p dangerouslySetInnerHTML={{ __html: resultData.length > 0 ? resultData : (loading ? "Loading..." : "") }}></p>
 									</div>
 								</div>
 							</>
