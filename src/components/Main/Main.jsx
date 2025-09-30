@@ -11,14 +11,11 @@ const Main = () => {
 
 	const {
         loading,
-        resultData,
         input,
         setInput,
-        recentPrompt,
         showResult,
         getChatResponse,
         messages,
-        currentConversation,
         currentModel,
         setCurrentModel
     } = useContext(Context);
@@ -70,7 +67,7 @@ const Main = () => {
 					<>
 						<div className="greet">
 							<p><span>Hello, {getUserDisplayName()}</span></p>
-							<p>Share your wildest thoughts...</p>
+							<p>What's on your mind?</p>
 						</div>
 						<div className="cards">
 							<div className="card" onClick={() => handleCardClick("Explain the concept of cloud computing.")}>
@@ -92,49 +89,25 @@ const Main = () => {
 						</div>
 					</> :
 					<div className="result">
-						{currentConversation && messages.length > 1 ? (
-							<div className="conversation-history">
-								{messages.map((message, index) => (
-									<div key={message.id || index} className={`message ${message.type.toLowerCase()}`}>
-										{message.type === 'USER' ? (
-											<div className="user-message">
-												<div className="message-content">
-													<p>{message.content}</p>
-												</div>
-											</div>
-										) : (
-											<div className="ai-message">
-												<div className="message-content">
-													<div dangerouslySetInnerHTML={{ 
-														__html: formatMessageContent(message.content) 
-													}}></div>
-												</div>
-											</div>
-										)}
+						{messages.map((message, index) => (
+							<div key={message.id || index} className={`message ${message.type.toLowerCase()}`}>
+								{message.type === 'USER' ? (
+									<div className="user-message">
+										<div className="message-content">
+											<p>{message.content}</p>
+										</div>
 									</div>
-								))}
-								{loading && (
+								) : (
 									<div className="ai-message">
 										<div className="message-content">
-											<p>Loading...</p>
+											<div dangerouslySetInnerHTML={{ 
+												__html: formatMessageContent(message.content) 
+											}}></div>
 										</div>
 									</div>
 								)}
 							</div>
-						) : (
-							<>
-								<div className="user-message">
-									<div className="message-content">
-										<p>{recentPrompt}</p>
-									</div>
-								</div>
-								<div className="ai-message">
-									<div className="message-content">
-										<p dangerouslySetInnerHTML={{ __html: resultData.length > 0 ? resultData : (loading ? "Loading..." : "") }}></p>
-									</div>
-								</div>
-							</>
-						)}
+						))}
 						<div ref={messagesEndRef} />
 					</div>}
 
@@ -145,7 +118,7 @@ const Main = () => {
 							onKeyDown={handleKeyDown}
 							value={input}
 							type="text"
-							placeholder='Whisper the question you would never dare to ask aloud'
+							placeholder='Send a message, generate an image, or analyze a file...'
 							className="input"
 						/>
 						<div>

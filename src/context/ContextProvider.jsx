@@ -1,6 +1,6 @@
 import { createContext, useState, useEffect, useCallback } from "react";
 import axios from "axios";
-import { useAuth } from "./AuthContext"; 
+import { useAuth } from "./AuthContext";
 import { formatMessageContent } from "../utils/textFormatter";
 
 // eslint-disable-next-line react-refresh/only-export-components
@@ -9,14 +9,11 @@ export const Context = createContext();
 const ContextProvider = ({ children }) => {
     const { currentUser } = useAuth();
 
-    const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
+    const API_BASE_URL = 'http://localhost:8080';
 
     const [input, setInput] = useState("");
-    const [recentPrompt, setRecentPrompt] = useState("");
-    const [prevPrompts, setPrevPrompts] = useState([]);
     const [showResult, setShowResult] = useState(false);
     const [loading, setLoading] = useState(false);
-    const [resultData, setResultData] = useState("");
 
     const [conversations, setConversations] = useState([]);
     const [currentConversation, setCurrentConversation] = useState(null);
@@ -48,22 +45,6 @@ const ContextProvider = ({ children }) => {
         }
     }, [currentUser, loadConversations]);
 
-    const formatMessagesForDisplay = (messages) => {
-        if (!messages || messages.length === 0) return "";
-
-        let formattedHtml = "";
-        for (let i = 0; i < messages.length; i++) {
-            const message = messages[i];
-            if (message.type === 'ASSISTANT') {
-                const formattedContent = formatMessageContent(message.content);
-
-                if (i > 0) formattedHtml += "<br/><br/>";
-                formattedHtml += formattedContent;
-            }
-        }
-        return formattedHtml;
-    };
-
     const selectConversation = async (conversationId) => {
         if (!currentUser) return;
 
@@ -75,18 +56,7 @@ const ContextProvider = ({ children }) => {
 
             setCurrentConversation(response.data.conversation);
             setMessages(response.data.messages);
-
-            setLoading(true);
             setShowResult(true);
-
-            const formattedConversation = formatMessagesForDisplay(response.data.messages);
-            setResultData(formattedConversation);
-
-            const userMessages = response.data.messages.filter(msg => msg.type === 'USER');
-            if (userMessages.length > 0) {
-                setRecentPrompt(userMessages[userMessages.length - 1].content);
-            }
-
             setLoading(false);
         } catch (error) {
             console.error('Error loading conversation:', error);
@@ -98,7 +68,6 @@ const ContextProvider = ({ children }) => {
         setCurrentConversation(null);
         setMessages([]);
         setShowResult(false);
-        setResultData("");
     };
 
     const deleteConversation = async (conversationId) => {
@@ -118,7 +87,6 @@ const ContextProvider = ({ children }) => {
                 setCurrentConversation(null);
                 setMessages([]);
                 setShowResult(false);
-                setResultData("");
             }
         } catch (error) {
             console.error('Error deleting conversation:', error);
@@ -132,10 +100,8 @@ const ContextProvider = ({ children }) => {
             return;
         }
 
-        setResultData("");
         setLoading(true);
         setShowResult(true);
-        setRecentPrompt(messageContent);
 
         const userMessage = {
             id: Date.now(),
@@ -144,6 +110,13 @@ const ContextProvider = ({ children }) => {
             timestamp: new Date().toISOString()
         };
         setMessages(prev => [...prev, userMessage]);
+
+        let assistantMessage = {
+            id: Date.now() + 1,
+            type: 'ASSISTANT',
+            content: "",
+            timestamp: new Date().toISOString()
+        };
 
         try {
             const token = currentUser ? await currentUser.getIdToken() : null;
@@ -157,7 +130,8 @@ const ContextProvider = ({ children }) => {
             let conversationId = currentConversation?.id || 0;
             const model = currentModel;
 
-            const response = await fetch(`${API_BASE_URL}/api/conversations/${conversationId}/messages`, {
+
+            const response = await fetch(`${API_BASE_URL}/api/conversations/${conversationId}/messages/stream`, {
                 method: 'POST',
                 headers: headers,
                 body: JSON.stringify({
@@ -173,25 +147,15 @@ const ContextProvider = ({ children }) => {
                 throw new Error("Response body is null");
             }
 
-            if (conversationId === 0 && currentUser) {
-                setTimeout(() => {
-                    loadConversations();
-                }, 1000);
-            }
+            let isNewConversation = conversationId === 0;
+            let receivedConversationId = false;
 
             const reader = response.body.getReader();
             const decoder = new TextDecoder();
             let assistantResponse = "";
 
-            const assistantMessage = {
-                id: Date.now() + 1,
-                type: 'ASSISTANT',
-                content: "",
-                timestamp: new Date().toISOString()
-            };
             setMessages(prev => [...prev, assistantMessage]);
 
-            // Stream parsing logic
             let buffer = '';
             while (true) {
                 const { done, value } = await reader.read();
@@ -205,29 +169,62 @@ const ContextProvider = ({ children }) => {
 
                 for (const line of lines) {
                     if (line.startsWith('data:')) {
-                        const chunk = line.substring(5).trim();
+                        const chunk = line.substring(5);
+                        if (isNewConversation && !receivedConversationId && chunk.startsWith('{')) {
+                            try {
+                                const conversationData = JSON.parse(chunk);
+                                if (conversationData.conversationId) {
+                                    const generateTitle = (content) => {
+                                        const title = content.trim();
+                                        return title.length > 50 ? title.substring(0, 47) + "..." : title;
+                                    };
+
+                                    const newConversation = {
+                                        id: conversationData.conversationId,
+                                        title: generateTitle(messageContent),
+                                        aiModel: model,
+                                        createdAt: new Date().toISOString(),
+                                        updatedAt: new Date().toISOString()
+                                    };
+                                    setCurrentConversation(newConversation);
+                                    setConversations(prev => [newConversation, ...prev]);
+                                    receivedConversationId = true;
+
+                                    continue; 
+                                }
+                            } catch {
+                                // Not JSON, treat as regular content
+                            }
+                        }
+
                         if (chunk) {
                             assistantResponse += chunk;
-                            const formattedAssistantResponse = formatMessageContent(assistantResponse);
-                            setResultData(formattedAssistantResponse);
-                            setMessages(prev => prev.map(msg =>
-                                msg.id === assistantMessage.id
-                                    ? { ...msg, content: assistantResponse }
-                                    : msg
-                            ));
+                        } else {
+                            assistantResponse += '\n';
                         }
+                        
+                        setMessages(prev => prev.map(msg =>
+                            msg.id === assistantMessage.id
+                                ? { ...msg, content: assistantResponse }
+                                : msg
+                        ));
                     }
                 }
             }
 
         } catch (error) {
             console.error('Error fetching chat response:', error);
-            setResultData("Sorry, I encountered an error. Please try again.");
+            setMessages(prev => prev.map(msg =>
+                msg.id === assistantMessage.id
+                    ? { ...msg, content: "Sorry, I encountered an error. Please try again." }
+                    : msg
+            ));
         } finally {
             setLoading(false);
             if (!promptText) {
                 setInput("");
             }
+            loadConversations();
         }
     };
 
@@ -236,16 +233,10 @@ const ContextProvider = ({ children }) => {
         getChatResponse,
         input,
         setInput,
-        recentPrompt,
-        setRecentPrompt,
-        prevPrompts,
-        setPrevPrompts,
         showResult,
         setShowResult,
         loading,
         setLoading,
-        resultData,
-        setResultData,
 
         conversations,
         currentConversation,

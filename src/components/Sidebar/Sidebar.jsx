@@ -143,37 +143,35 @@ export default function Sidebar({ onExpandedChange }) {
               </div>
             )}
           </button>
-          {expanded && (
-            <div className="sidebar-section">
-              <div className="sidebar-section-header expanded recents-header">
-                <span className="sidebar-section-title expanded">
-                  Recents
-                </span>
-              </div>
-              
-              <ul className="sidebar-chat-list">
-                {recentChats.map((chat) => (
-                  <li 
-                    key={chat.id}
-                    className={`sidebar-chat-item ${currentConversation?.id === chat.id ? 'active' : ''}`}
-                    onClick={() => handleChatClick(chat.id)}
-                  >
-                    <div className="sidebar-chat-content">
-                      <span className="sidebar-chat-title">
-                        {chat.title.length > 35 ? `${chat.title.substring(0, 35)}...` : chat.title}
-                      </span>
-                    </div>
-                    <button
-                      className="sidebar-chat-menu"
-                      onClick={(e) => handleDeleteChat(e, chat.id)}
-                    >
-                      <IoClose size={16} />
-                    </button>
-                  </li>
-                ))}
-              </ul>
+          <div className={`sidebar-section ${expanded ? '' : 'collapsed'}`}>
+            <div className="sidebar-section-header expanded recents-header">
+              <span className="sidebar-section-title expanded">
+                Recents
+              </span>
             </div>
-          )}
+            
+            <ul className="sidebar-chat-list">
+              {recentChats.map((chat) => (
+                <li 
+                  key={chat.id}
+                  className={`sidebar-chat-item ${currentConversation?.id === chat.id ? 'active' : ''}`}
+                  onClick={() => handleChatClick(chat.id)}
+                >
+                  <div className="sidebar-chat-content">
+                    <span className="sidebar-chat-title">
+                      {chat.title.length > 35 ? `${chat.title.substring(0, 35)}...` : chat.title}
+                    </span>
+                  </div>
+                  <button
+                    className="sidebar-chat-menu"
+                    onClick={(e) => handleDeleteChat(e, chat.id)}
+                  >
+                    <IoClose size={16} />
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
 
         <div className="sidebar-footer">
