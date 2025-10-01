@@ -28,6 +28,16 @@
   box-shadow: none;
 }
 
+.model-selector-trigger.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.model-selector-trigger.disabled:hover {
+  background-color: transparent;
+}
+
 .model-name {
   font-size: 13px;
   font-weight: 400;
@@ -48,7 +58,7 @@
 
 .model-selector-dropdown {
   position: absolute;
-  top: calc(100% + 6px);
+  bottom: calc(100% + 6px);
   left: 0;
   background-color: #1e1f20;
   border: 1px solid #3a3a3a;
@@ -57,13 +67,13 @@
   z-index: 10000;
   min-width: 120px;
   overflow: hidden;
-  animation: slideDown 0.15s ease-out;
+  animation: slideUp 0.15s ease-out;
 }
 
-@keyframes slideDown {
+@keyframes slideUp {
   from {
     opacity: 0;
-    transform: translateY(-8px);
+    transform: translateY(8px);
   }
   to {
     opacity: 1;
