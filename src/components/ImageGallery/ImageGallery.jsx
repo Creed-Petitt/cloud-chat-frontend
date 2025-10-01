@@ -7,10 +7,6 @@ const ImageGallery = () => {
 
     return (
         <div className="image-gallery-container">
-            <div className="gallery-header">
-                <h1>Image Gallery</h1>
-                <p>{generatedImages.length} images generated</p>
-            </div>
             <div className="image-grid">
                 {generatedImages.map((image, index) => (
                     <div key={index} className="grid-item">
