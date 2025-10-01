@@ -3,6 +3,9 @@ export const formatMessageContent = (content) => {
 
     let formatted = content;
 
+    // Handle images first
+    formatted = formatted.replace(/!\[(.*?)\]\((.*?)\)/g, '<img class="chat-image" src="$2" alt="$1" />');
+
     // Handle code blocks first (```code```)
     formatted = formatted.replace(/```(\w+)?\n([\s\S]*?)```/g, '<div class="code-block"><pre><code>$2</code></pre></div>');
     formatted = formatted.replace(/```([\s\S]*?)```/g, '<div class="code-block"><pre><code>$1</code></pre></div>');
