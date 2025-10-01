@@ -18,7 +18,7 @@ const ContextProvider = ({ children }) => {
     const [conversations, setConversations] = useState([]);
     const [currentConversation, setCurrentConversation] = useState(null);
     const [messages, setMessages] = useState([]);
-    const [currentModel, setCurrentModel] = useState("gemini");
+    const [currentModel, setCurrentModel] = useState("openai");
     const [isImageMode, setIsImageMode] = useState(false);
     const [generatedImages, setGeneratedImages] = useState([]);
     const [currentView, setCurrentView] = useState('chat');
@@ -70,6 +70,19 @@ const ContextProvider = ({ children }) => {
             setGeneratedImages([]);
         }
     }, [currentUser, loadConversations, loadImages]);
+
+    // Auto-switch model based on image mode
+    useEffect(() => {
+        if (isImageMode) {
+            // When entering image mode, switch to Gemini
+            setCurrentModel("gemini");
+        } else {
+            // When exiting image mode, switch to OpenAI if currently on Gemini
+            if (currentModel === "gemini") {
+                setCurrentModel("openai");
+            }
+        }
+    }, [isImageMode]); // Only depend on isImageMode, not currentModel to avoid loop
 
     const selectConversation = async (conversationId) => {
         if (!currentUser) return;
