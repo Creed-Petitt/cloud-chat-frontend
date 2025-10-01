@@ -1,5 +1,4 @@
 import { useState, useRef, useEffect } from 'react'
-import ModelLogos from '../logos/ModelLogos'
 import './ModelSelector.css'
 
 const ModelSelector = ({ currentModel, setCurrentModel }) => {
@@ -7,9 +6,9 @@ const ModelSelector = ({ currentModel, setCurrentModel }) => {
   const dropdownRef = useRef(null)
 
   const models = [
-    { id: 'gemini', name: 'Gemini', logo: ModelLogos.gemini },
-    { id: 'claude', name: 'Claude', logo: ModelLogos.anthropic },
-    { id: 'openai', name: 'OpenAI', logo: ModelLogos.openai }
+    { id: 'gemini', name: 'Gemini' },
+    { id: 'claude', name: 'Claude' },
+    { id: 'openai', name: 'OpenAI' }
   ]
 
   const currentModelData = models.find(model => model.id === currentModel) || models[0]
@@ -37,12 +36,11 @@ const ModelSelector = ({ currentModel, setCurrentModel }) => {
         onClick={() => setIsOpen(!isOpen)}
         aria-label={`Current model: ${currentModelData.name}`}
       >
-        <currentModelData.logo />
         <span className="model-name">{currentModelData.name}</span>
         <svg
           className={`chevron ${isOpen ? 'open' : ''}`}
-          width="16"
-          height="16"
+          width="14"
+          height="14"
           viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"
@@ -59,7 +57,6 @@ const ModelSelector = ({ currentModel, setCurrentModel }) => {
               className={`model-option ${model.id === currentModel ? 'active' : ''}`}
               onClick={() => handleModelSelect(model.id)}
             >
-              <model.logo />
               <span>{model.name}</span>
               {model.id === currentModel && (
                 <svg className="check-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">

@@ -6,40 +6,39 @@
 .model-selector-trigger {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 12px;
-  background-color: #1a1a1a;
-  border: 1px solid #333333;
-  border-radius: 8px;
+  gap: 6px;
+  padding: 6px 8px;
+  background-color: transparent;
+  border: none;
   color: #b8b8b8;
   cursor: pointer;
   transition: all 0.2s ease;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 400;
   outline: none;
+  white-space: nowrap;
+  border-radius: 6px;
 }
 
 .model-selector-trigger:hover {
-  border-color: #666666;
-  background-color: #2a2a2a;
+  background-color: rgba(255, 255, 255, 0.08);
 }
 
 .model-selector-trigger:focus {
-  border-color: #666666;
-  box-shadow: 0 0 0 2px rgba(102, 102, 102, 0.2);
+  box-shadow: none;
 }
 
 .model-name {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 400;
-  color: #b8b8b8;
+  color: #e8e8e8;
 }
 
 .chevron {
   transition: transform 0.2s ease;
   color: #b8b8b8;
-  width: 16px;
-  height: 16px;
+  width: 14px;
+  height: 14px;
   stroke-width: 2;
 }
 
@@ -49,15 +48,14 @@
 
 .model-selector-dropdown {
   position: absolute;
-  top: 100%;
-  right: 0;
-  margin-top: 4px;
-  background-color: #1a1a1a;
-  border: 1px solid #333333;
+  top: calc(100% + 6px);
+  left: 0;
+  background-color: #1e1f20;
+  border: 1px solid #3a3a3a;
   border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-  z-index: 1000;
-  min-width: 140px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+  z-index: 10000;
+  min-width: 120px;
   overflow: hidden;
   animation: slideDown 0.15s ease-out;
 }
@@ -76,38 +74,31 @@
 .model-option {
   display: flex;
   align-items: center;
-  gap: 10px;
+  justify-content: space-between;
   width: 100%;
-  padding: 10px 12px;
+  padding: 8px 12px;
   background: none;
   border: none;
   color: #b8b8b8;
   cursor: pointer;
   transition: background-color 0.2s ease;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 400;
   text-align: left;
 }
 
 .model-option:hover {
-  background-color: #2a2a2a;
+  background-color: rgba(255, 255, 255, 0.08);
 }
 
 .model-option.active {
-  background-color: #333333;
-  color: #ffffff;
-}
-
-.model-option svg {
-  width: 24px;
-  height: 24px;
-  flex-shrink: 0;
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #e8e8e8;
 }
 
 .check-icon {
-  margin-left: auto;
   color: #4CAF50;
-  width: 16px !important;
-  height: 16px !important;
-  stroke-width: 2;
+  width: 14px !important;
+  height: 14px !important;
+  stroke-width: 2.5;
 }
