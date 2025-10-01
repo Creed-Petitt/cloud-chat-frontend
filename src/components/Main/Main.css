@@ -51,7 +51,7 @@
 }
 
 .main .greet span{
-    background: -webkit-linear-gradient(16deg, #161cbe, #e60918);
+    background: -webkit-linear-gradient(16deg, #161cbe, #0ccc46);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;;
 }
@@ -255,7 +255,7 @@
     background-color: #555;
 }
 
-/* New chat layout styles */
+
 .user-message {
     display: flex;
     justify-content: flex-end;

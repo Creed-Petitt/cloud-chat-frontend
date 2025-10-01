@@ -146,26 +146,27 @@ const Main = () => {
 												</div>
 											</div>
 										);
+								} else {
+									let finalContent;
+									// Check if message has an imageUrl (either messageType=IMAGE or ASSISTANT with imageUrl)
+									if (imageUrl || messageType === 'IMAGE') {
+										const url = imageUrl || (messageContent.match(/\(([^)]+)\)/) || [])[1];
+										finalContent = url ? `![Image](${url})` : "Image not available";
 									} else {
-										let finalContent;
-										if (messageType === 'IMAGE') {
-											const url = imageUrl || (messageContent.match(/\(([^)]+)\)/) || [])[1];
-											finalContent = url ? `![Image](${url})` : "Image not available";
-										} else {
-											finalContent = messageContent;
-										}
-										return (
-											<div key={message.id || index} className="message assistant">
-												<div className="ai-message">
-													<div className="message-content">
-														<div dangerouslySetInnerHTML={{
-															__html: formatMessageContent(finalContent)
-														}}></div>
-													</div>
+										finalContent = messageContent;
+									}
+									return (
+										<div key={message.id || index} className="message assistant">
+											<div className="ai-message">
+												<div className="message-content">
+													<div dangerouslySetInnerHTML={{
+														__html: formatMessageContent(finalContent)
+													}}></div>
 												</div>
 											</div>
-										);
-									}
+										</div>
+									);
+								}
 								})}
 								<div ref={messagesEndRef} />
 							</div>}

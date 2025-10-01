@@ -318,8 +318,8 @@ const ContextProvider = ({ children }) => {
 
             const { imageUrl, conversationId } = response.data;
 
-            // Update conversation ID if it's a new conversation
-            if (!currentConversation && conversationId) {
+            // Update conversation ID if backend returned one (could be new or existing)
+            if (conversationId && (!currentConversation || currentConversation.id !== conversationId)) {
                 await loadConversations();
                 setCurrentConversation({ id: conversationId });
             }
