@@ -38,10 +38,11 @@
     scrollbar-width: thin;
     scrollbar-color: #444 transparent;
     margin-bottom: 160px;
+    justify-content: center;
 }
 
 .main .greet{
-    margin: 30px auto 20px auto;
+    margin: 0 auto 20px auto;
     font-size: 34px;
     color: #c4c7c5;
     font-weight: 500;
