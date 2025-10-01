@@ -7,13 +7,15 @@
   font-family: Outfit;
 }
 
-body {
+body, html {
   background-color: #000000;
   color: #ffffff;
+  overflow-x: hidden;
 }
 
 #root{
-  min-height: 100vh;
+  height: 100vh;
   display: flex;
   background-color: #000000;
+  overflow: hidden;
 }
