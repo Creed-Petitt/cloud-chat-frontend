@@ -19,6 +19,30 @@ const ContextProvider = ({ children }) => {
     const [currentConversation, setCurrentConversation] = useState(null);
     const [messages, setMessages] = useState([]);
     const [currentModel, setCurrentModel] = useState("gemini");
+    const [isImageMode, setIsImageMode] = useState(false);
+    const [generatedImages, setGeneratedImages] = useState([]);
+    const [currentView, setCurrentView] = useState('chat');
+
+    const loadImages = useCallback(async () => {
+        if (!currentUser) return;
+
+        try {
+            const token = await currentUser.getIdToken();
+            const response = await axios.get(`${API_BASE_URL}/api/images/my-images`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+
+            // Normalize the data to have a 'prompt' field
+            const normalizedImages = response.data.map(image => ({
+                ...image,
+                prompt: image.content // Rename 'content' to 'prompt'
+            }));
+
+            setGeneratedImages(normalizedImages);
+        } catch (error) {
+            console.error('Error loading images:', error);
+        }
+    }, [currentUser, API_BASE_URL]);
 
 
     const loadConversations = useCallback(async () => {
@@ -38,12 +62,14 @@ const ContextProvider = ({ children }) => {
     useEffect(() => {
         if (currentUser) {
             loadConversations();
+            loadImages();
         } else {
             setConversations([]);
             setCurrentConversation(null);
             setMessages([]);
+            setGeneratedImages([]);
         }
-    }, [currentUser, loadConversations]);
+    }, [currentUser, loadConversations, loadImages]);
 
     const selectConversation = async (conversationId) => {
         if (!currentUser) return;
@@ -55,6 +81,7 @@ const ContextProvider = ({ children }) => {
             });
 
             setCurrentConversation(response.data.conversation);
+            console.log('Loaded messages:', response.data.messages);
             setMessages(response.data.messages);
             setShowResult(true);
             setLoading(false);
@@ -229,8 +256,90 @@ const ContextProvider = ({ children }) => {
     };
 
 
+    const generateImage = async (prompt) => {
+        if (!prompt || !prompt.trim()) {
+            console.error('No prompt provided for image generation');
+            return;
+        }
+
+        setLoading(true);
+        setShowResult(true);
+
+        const userMessage = {
+            id: Date.now(),
+            type: 'USER',
+            content: prompt,
+            timestamp: new Date().toISOString()
+        };
+        setMessages(prev => [...prev, userMessage]);
+
+        const assistantMessage = {
+            id: Date.now() + 1,
+            type: 'ASSISTANT',
+            content: "Generating image...",
+            timestamp: new Date().toISOString()
+        };
+        setMessages(prev => [...prev, assistantMessage]);
+
+        try {
+            const token = currentUser ? await currentUser.getIdToken() : null;
+            if (!token) {
+                throw new Error("User not authenticated");
+            }
+
+            const headers = {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            };
+
+            const payload = {
+                prompt: prompt,
+                model: 'imagen',
+            };
+
+            if (currentConversation) {
+                payload.conversationId = currentConversation.id;
+            }
+
+            const response = await axios.post(`${API_BASE_URL}/api/images/generate`, payload, { headers });
+
+            const { imageUrl, conversationId } = response.data;
+
+            // Update conversation ID if it's a new conversation
+            if (!currentConversation && conversationId) {
+                await loadConversations();
+                setCurrentConversation({ id: conversationId });
+            }
+
+            const imageMarkdown = `![Image generated from prompt: ${prompt}](${imageUrl})`;
+
+            setMessages(prev => prev.map(msg =>
+                msg.id === assistantMessage.id
+                    ? { ...msg, content: imageMarkdown, messageType: 'IMAGE', imageUrl }
+                    : msg
+            ));
+
+            // Add the new image (which has the correct format) to the gallery state
+            setGeneratedImages(prev => [response.data, ...prev]);
+
+        } catch (error) {
+            console.error('Error generating image:', error);
+            const errorMessage = error.response?.data?.message || "Sorry, I encountered an error while generating the image.";
+            setMessages(prev => prev.map(msg =>
+                msg.id === assistantMessage.id
+                    ? { ...msg, content: errorMessage }
+                    : msg
+            ));
+        } finally {
+            setLoading(false);
+            setInput("");
+        }
+    };
+
+
     const contextValue = {
         getChatResponse,
+        generateImage,
         input,
         setInput,
         showResult,
@@ -248,6 +357,12 @@ const ContextProvider = ({ children }) => {
 
         currentModel,
         setCurrentModel,
+        isImageMode,
+        setIsImageMode,
+        generatedImages,
+        loadImages,
+        currentView,
+        setCurrentView,
     };
 
     return (
