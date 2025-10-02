@@ -1,15 +1,17 @@
 import './Main.css'
-import { useContext, useRef, useEffect } from 'react'
+import { useContext, useRef, useEffect, useState } from 'react'
 import { Context } from '../../context/ContextProvider'
 import { useAuth } from '../../context/AuthContext'
 import { formatMessageContent } from '../../utils/textFormatter';
 import ModelSelector from '../ModelSelector/ModelSelector';
 import ImageGallery from '../ImageGallery/ImageGallery';
+import ImageModal from '../ImageModal/ImageModal';
 
 
 const Main = () => {
 	const messagesEndRef = useRef(null);
 	const textareaRef = useRef(null);
+	const [selectedImage, setSelectedImage] = useState(null);
 
 	const {
         loading,
@@ -60,6 +62,21 @@ const Main = () => {
 		adjustTextareaHeight();
 	}, [input]);
 
+	// Add click listeners to chat images
+	useEffect(() => {
+		const handleImageClick = (e) => {
+			if (e.target.classList.contains('chat-image')) {
+				setSelectedImage({
+					imageUrl: e.target.src,
+					prompt: e.target.alt
+				});
+			}
+		};
+
+		document.addEventListener('click', handleImageClick);
+		return () => document.removeEventListener('click', handleImageClick);
+	}, []);
+
 	const handleCardClick = (prompt) => {
 		setInput(prompt);
 		getChatResponse(prompt);
@@ -104,12 +121,12 @@ const Main = () => {
 			</div>
 			{currentView === 'chat' ? (
 				<>
-					<div className="main-container">
+					<div className={`main-container${!showResult ? ' centered' : ''}`}>
 						{!showResult ?
 							<>
 								<div className="greet">
-									<p><span>Hello, {getUserDisplayName()}</span></p>
-									<p>What's on your mind?</p>
+									<p><span>Hello, {getUserDisplayName()}!</span></p>
+									<p>{currentUser ? "What can I help you with today?" : "Sign in to save your images"}</p>
 								</div>
 								<div className="cards">
 									<div className="card" onClick={() => handleCardClick("Explain the concept of cloud computing.")}>
@@ -216,6 +233,12 @@ const Main = () => {
 			) : (
 				<ImageGallery />
 			)}
+			<ImageModal
+				imageUrl={selectedImage?.imageUrl}
+				prompt={selectedImage?.prompt}
+				isOpen={!!selectedImage}
+				onClose={() => setSelectedImage(null)}
+			/>
 		</div>
 	)
 }
