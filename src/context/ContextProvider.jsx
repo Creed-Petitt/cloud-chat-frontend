@@ -3,13 +3,16 @@ import { useAuth } from "./AuthContext";
 import { useConversations } from "../hooks/useConversations";
 import { useChat } from "../hooks/useChat";
 import { useImages } from "../hooks/useImages";
+import * as uploadService from "../services/upload.service";
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const Context = createContext();
 
 const ContextProvider = ({ children }) => {
     const { currentUser } = useAuth();
-    const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
+    
+    // import.meta.env.VITE_API_BASE_URL ||
+    const API_BASE_URL = 'http://localhost:8080';
 
     const [input, setInput] = useState("");
     const [currentModel, setCurrentModel] = useState("openai");
@@ -76,8 +79,8 @@ const ContextProvider = ({ children }) => {
         }
     };
 
-    const getChatResponse = async (promptText = null) => {
-        await chatState.getChatResponse(promptText, input);
+    const getChatResponse = async (promptText = null, imageUrl = null) => {
+        await chatState.getChatResponse(promptText, imageUrl, input);
         setInput("");
     };
 
@@ -86,9 +89,15 @@ const ContextProvider = ({ children }) => {
         await imageState.generateImage(prompt, chatState.setMessages, chatState.setLoading, setInput);
     };
 
+    const uploadFile = async (file) => {
+        const token = currentUser ? await currentUser.getIdToken() : null;
+        return await uploadService.uploadFile(file, token, API_BASE_URL);
+    };
+
     const contextValue = {
         getChatResponse,
         generateImage,
+        uploadFile,
         input,
         setInput,
         showResult: chatState.showResult,

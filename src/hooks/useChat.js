@@ -15,10 +15,11 @@ export const useChat = (
     const [showResult, setShowResult] = useState(false);
     const [loading, setLoading] = useState(false);
 
-    const getChatResponse = async (promptText = null, input = "") => {
+    const getChatResponse = async (promptText = null, imageUrl = null, input = "") => {
         const messageContent = promptText || input;
-        if (!messageContent.trim()) {
-            console.error('No message content provided');
+        // Allow message if either content or imageUrl is provided
+        if (!messageContent.trim() && !imageUrl) {
+            console.error('No message content or image provided');
             return;
         }
 
@@ -29,6 +30,7 @@ export const useChat = (
             id: Date.now(),
             type: 'USER',
             content: messageContent,
+            imageUrl: imageUrl,
             timestamp: new Date().toISOString()
         };
         setMessages(prev => [...prev, userMessage]);
@@ -51,6 +53,7 @@ export const useChat = (
             assistantResponse = await conversationService.streamChatResponse({
                 conversationId,
                 messageContent,
+                imageUrl,
                 model,
                 token,
                 apiBaseUrl,

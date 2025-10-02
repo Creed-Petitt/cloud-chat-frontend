@@ -23,6 +23,7 @@ export const deleteConversation = async (conversationId, token, apiBaseUrl) => {
 export const streamChatResponse = async ({
     conversationId,
     messageContent,
+    imageUrl,
     model,
     token,
     apiBaseUrl,
@@ -36,13 +37,20 @@ export const streamChatResponse = async ({
         headers['Authorization'] = `Bearer ${token}`;
     }
 
+    const requestBody = {
+        content: messageContent,
+        aiModel: model
+    };
+
+    // Include imageUrl if it exists
+    if (imageUrl) {
+        requestBody.imageUrl = imageUrl;
+    }
+
     const response = await fetch(`${apiBaseUrl}/api/conversations/${conversationId}/messages/stream`, {
         method: 'POST',
         headers: headers,
-        body: JSON.stringify({
-            content: messageContent,
-            aiModel: model
-        })
+        body: JSON.stringify(requestBody)
     });
 
     if (!response.ok) {
@@ -79,7 +87,8 @@ export const streamChatResponse = async ({
                             receivedConversationId = true;
                             continue;
                         }
-                    } catch {
+                    } catch (error) {
+                        console.error("Failed to parse conversation data:", error);
                     }
                 }
 

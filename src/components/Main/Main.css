@@ -292,6 +292,25 @@
     border: 1px solid #404040;
 }
 
+.message-file-wrapper {
+    margin-bottom: 10px;
+}
+
+.message-file-wrapper .file-preview-card {
+    max-width: 250px;
+    padding: 8px 12px;
+}
+
+.message-file-wrapper .file-preview-remove {
+    display: none;
+}
+
+.message-file-wrapper .file-preview-image img {
+    max-width: 200px;
+    max-height: 150px;
+}
+
+
 .ai-message .message-content {
     background-color: transparent;
     color: #e8e8e8;

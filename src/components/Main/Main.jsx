@@ -6,12 +6,18 @@ import { formatMessageContent } from '../../utils/textFormatter';
 import ModelSelector from '../ModelSelector/ModelSelector';
 import ImageGallery from '../ImageGallery/ImageGallery';
 import ImageModal from '../ImageModal/ImageModal';
+import FileUploadPopup from '../FileUploadPopup/FileUploadPopup';
+import FilePreview from '../FilePreview/FilePreview';
 
 
 const Main = () => {
 	const messagesEndRef = useRef(null);
 	const textareaRef = useRef(null);
 	const [selectedImage, setSelectedImage] = useState(null);
+	const [selectedFile, setSelectedFile] = useState(null);
+	const [uploadedImageUrl, setUploadedImageUrl] = useState(null);
+	const [showFilePopup, setShowFilePopup] = useState(false);
+	const fileInputRef = useRef(null);
 
 	const {
         loading,
@@ -25,7 +31,8 @@ const Main = () => {
         setCurrentModel,
 		isImageMode,
 		setIsImageMode,
-		currentView
+		currentView,
+		uploadFile
     } = useContext(Context);
 
 	const { currentUser } = useAuth();
@@ -58,6 +65,7 @@ const Main = () => {
 	}, [messages, loading, currentView]);
 
 	// Auto-adjust textarea height when input changes
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	useEffect(() => {
 		adjustTextareaHeight();
 	}, [input]);
@@ -82,14 +90,47 @@ const Main = () => {
 		getChatResponse(prompt);
 	};
 
-	const handleSend = () => {
-		if (!input.trim()) return;
+	const handleSend = async () => {
+		// Allow sending if either input has text OR a file/image is selected
+		if (!input.trim() && !selectedFile && !uploadedImageUrl) return;
+
+		let imageUrl = null;
+		let messageText = input.trim();
+
+		// Upload file first if selected
+		if (selectedFile) {
+			try {
+				imageUrl = await uploadFile(selectedFile);
+
+				// If no text was entered, use the filename as placeholder
+				if (!messageText) {
+					const fileExtension = selectedFile.name.split('.').pop().toUpperCase();
+					messageText = `[Attached ${fileExtension}: ${selectedFile.name}]`;
+				}
+			} catch (error) {
+				console.error('Error uploading file:', error);
+				// Continue with message send even if upload fails
+			}
+		} else if (uploadedImageUrl) {
+			// Use the URL that was pasted
+			imageUrl = uploadedImageUrl;
+
+			// If no text was entered, use a placeholder
+			if (!messageText) {
+				messageText = '[Attached image from URL]';
+			}
+		}
+
 		if (isImageMode) {
 			generateImage(input);
 		} else {
-			getChatResponse();
+			getChatResponse(messageText, imageUrl);
 		}
+
 		setInput("");
+		// Clear file after sending
+		setSelectedFile(null);
+		setUploadedImageUrl(null);
 		// Reset textarea height after clearing
 		if (textareaRef.current) {
 			textareaRef.current.style.height = 'auto';
@@ -97,7 +138,8 @@ const Main = () => {
 	};
 
 	const handleKeyDown = (e) => {
-		if (e.key === 'Enter' && !e.shiftKey && input.trim()) {
+		// Allow Enter to send if there's text input OR a file/image is selected
+		if (e.key === 'Enter' && !e.shiftKey && (input.trim() || selectedFile || uploadedImageUrl)) {
 			e.preventDefault();
 			handleSend();
 		}
@@ -114,8 +156,42 @@ const Main = () => {
 		return 'User';
 	};
 
+	const handleFileInputChange = (e) => {
+		const file = e.target.files[0];
+		if (file) {
+			setSelectedFile(file);
+			setUploadedImageUrl(null);
+			setShowFilePopup(false);
+			// Reset input so same file can be selected again
+			if (fileInputRef.current) {
+				fileInputRef.current.value = '';
+			}
+		}
+	};
+
+	const handleUploadClick = () => {
+		fileInputRef.current?.click();
+	};
+
+	const handleUrlSelect = (url) => {
+		setUploadedImageUrl(url);
+		setSelectedFile(null); // Clear file if URL is selected
+	};
+
+	const handleRemoveFile = () => {
+		setSelectedFile(null);
+		setUploadedImageUrl(null);
+	};
+
 	return (
 		<div className="main">
+			<input
+				ref={fileInputRef}
+				type="file"
+				accept="image/*,application/pdf"
+				onChange={handleFileInputChange}
+				style={{ display: 'none' }}
+			/>
 			<div className="nav">
 				<p>{currentView === 'images' ? 'Gallery' : 'CloudChat'}</p>
 			</div>
@@ -158,6 +234,11 @@ const Main = () => {
 											<div key={message.id || index} className="message user">
 												<div className="user-message">
 													<div className="message-content">
+														{imageUrl && (
+															<div className="message-file-wrapper">
+																<FilePreview imageUrl={imageUrl} onRemove={null} />
+															</div>
+														)}
 														<p>{messageContent}</p>
 													</div>
 												</div>
@@ -190,6 +271,13 @@ const Main = () => {
 					</div>
 					<div className="main-bottom">
 						<div className="search-box">
+							{(selectedFile || uploadedImageUrl) && (
+								<FilePreview
+									file={selectedFile}
+									imageUrl={uploadedImageUrl}
+									onRemove={handleRemoveFile}
+								/>
+							)}
 							<div className="search-box-input-area">
 								<textarea
 									ref={textareaRef}
@@ -207,10 +295,16 @@ const Main = () => {
 
 							<div className="search-box-controls">
 								<div className="search-box-left-controls">
-									<div className="icon-wrapper">
+									<div className="icon-wrapper" onClick={() => setShowFilePopup(!showFilePopup)} style={{ position: 'relative' }}>
 										<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="#b8b8b8">
 											<path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z"/>
 										</svg>
+										<FileUploadPopup
+											isOpen={showFilePopup}
+											onClose={() => setShowFilePopup(false)}
+											onUploadClick={handleUploadClick}
+											onUrlSelect={handleUrlSelect}
+										/>
 									</div>
 					<div className={`icon-wrapper ${isImageMode ? 'active' : ''}`} onClick={() => setIsImageMode(!isImageMode)}>
 						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="#b8b8b8">
