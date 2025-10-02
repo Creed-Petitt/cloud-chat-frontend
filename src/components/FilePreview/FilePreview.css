@@ -1,0 +1,81 @@
+.file-preview-container {
+  margin-bottom: 12px;
+  width: 100%;
+}
+
+.file-preview-card {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  background: linear-gradient(#2a2a2a, #2a2a2a) padding-box,
+              linear-gradient(16deg, #161cbe, #0ccc46) border-box;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  padding: 10px 14px;
+  max-width: 100%;
+}
+
+.file-preview-image {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: 4px;
+}
+
+.file-preview-image img {
+  max-width: 120px;
+  max-height: 80px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.file-preview-pdf {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+}
+
+.file-preview-pdf svg {
+  flex-shrink: 0;
+  opacity: 0.9;
+}
+
+.file-name {
+  color: #e8e8e8;
+  font-size: 13px;
+  font-weight: 400;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 180px;
+}
+
+.file-preview-remove {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background-color: #2a2a2a;
+  border: 1px solid #3a3a3a;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: #b8b8b8;
+  padding: 0;
+}
+
+.file-preview-remove:hover {
+  background-color: #3a3a3a;
+  color: #e8e8e8;
+}
+
+.file-preview-remove svg {
+  display: block;
+}

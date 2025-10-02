@@ -1,0 +1,118 @@
+.file-upload-popup {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 0;
+  background-color: #1e1f20;
+  border: 1px solid #3a3a3a;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+  z-index: 10000;
+  min-width: 220px;
+  overflow: hidden;
+  animation: slideUp 0.15s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.file-upload-options {
+  display: flex;
+  flex-direction: column;
+}
+
+.file-upload-option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  background: none;
+  border: none;
+  color: #e8e8e8;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  font-size: 13px;
+  font-weight: 400;
+  text-align: left;
+}
+
+.file-upload-option:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+}
+
+.file-upload-option svg {
+  flex-shrink: 0;
+  opacity: 0.8;
+}
+
+.file-upload-option span {
+  white-space: nowrap;
+}
+
+.url-input-container {
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.url-input {
+  width: 100%;
+  padding: 8px 10px;
+  background-color: #2a2a2a;
+  border: 1px solid #3a3a3a;
+  border-radius: 6px;
+  color: #e8e8e8;
+  font-size: 13px;
+  outline: none;
+  font-family: inherit;
+}
+
+.url-input:focus {
+  border-color: #555;
+}
+
+.url-input::placeholder {
+  color: #888;
+}
+
+.url-input-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.url-action-button {
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  border: none;
+}
+
+.url-action-button.cancel {
+  background-color: transparent;
+  color: #b8b8b8;
+}
+
+.url-action-button.cancel:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+}
+
+.url-action-button.submit {
+  background-color: #0084ff;
+  color: #fff;
+}
+
+.url-action-button.submit:hover {
+  background-color: #0073e6;
+}
