@@ -131,6 +131,22 @@
   object-fit: cover;
 }
 
+.sidebar-avatar-guest {
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #333333;
+}
+
+.sidebar-avatar-guest svg {
+  width: 20px !important;
+  height: 20px !important;
+}
+
 
 .sidebar-user-info {
   display: flex;
@@ -182,9 +198,8 @@
   color: #a0a0a0;
 }
 
-/* Sign in button */
 .sidebar-signin-button {
-  background-color: #4f46e5;
+  background: linear-gradient(135deg, #161cbe, #0ccc46);
   color: white;
   border: none;
   border-radius: 0.375rem;
@@ -192,14 +207,13 @@
   font-size: 0.7rem;
   font-weight: 500;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: opacity 0.2s ease;
+  margin-left: auto;
 }
 
 .sidebar-signin-button:hover {
-  background-color: #333333;
+  opacity: 0.85;
 }
-
-/* User menu dropdown */
 .sidebar-user-menu {
   position: absolute;
   bottom: 100%;
