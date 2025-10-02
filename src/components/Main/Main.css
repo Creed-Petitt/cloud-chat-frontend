@@ -302,7 +302,6 @@
     word-wrap: break-word;
     overflow-wrap: break-word;
     max-width: 100%;
-    overflow: hidden;
     box-sizing: border-box;
 }
 
@@ -347,29 +346,29 @@
 .heading {
     font-weight: 600;
     color: #ffffff;
-    margin: 20px 0 12px 0;
-    font-size: 1.2em;
+    margin: 16px 0 10px 0;
+    font-size: 1.1em;
     border-bottom: 1px solid #444;
     padding-bottom: 6px;
 }
 
 .section-header {
-    font-weight: 700;
+    font-weight: 600;
     color: #ffffff;
-    margin: 32px 0 24px 0;
-    font-size: 1.4em;
-    padding: 16px 0;
+    margin: 20px 0 16px 0;
+    font-size: 1.2em;
+    padding: 12px 0;
     border-left: 4px solid #0084ff;
     padding-left: 16px;
     border-bottom: 1px solid #333;
-    padding-bottom: 12px;
+    padding-bottom: 10px;
 }
 
 .numbered-header {
     font-weight: 600;
     color: #ffffff;
-    margin: 24px 0 16px 0;
-    font-size: 1.2em;
+    margin: 16px 0 12px 0;
+    font-size: 1.1em;
     padding: 8px 0;
     border-left: 3px solid #0084ff;
     padding-left: 12px;
@@ -391,6 +390,7 @@
     border-radius: 8px;
     margin: 16px 0;
     overflow-x: auto;
+    max-width: 100%;
 }
 
 .code-block pre {
