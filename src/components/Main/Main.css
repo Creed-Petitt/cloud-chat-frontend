@@ -38,12 +38,15 @@
     scrollbar-width: thin;
     scrollbar-color: #444 transparent;
     margin-bottom: 160px;
+}
+
+.main-container.centered {
     justify-content: center;
 }
 
 .main .greet{
     margin: 0 auto 20px auto;
-    font-size: 34px;
+    font-size: 40px;
     color: #c4c7c5;
     font-weight: 500;
     padding: 20px;
@@ -319,6 +322,12 @@
     border: 1px solid #333;
     border-radius: 8px;
     object-fit: contain;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+}
+
+.chat-image:hover {
+    opacity: 0.85;
 }
 
 .paragraph {
