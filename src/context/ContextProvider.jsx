@@ -11,8 +11,8 @@ export const Context = createContext();
 const ContextProvider = ({ children }) => {
     const { currentUser } = useAuth();
     
-    // import.meta.env.VITE_API_BASE_URL ||
-    const API_BASE_URL = 'http://localhost:8080';
+    const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
+    // const API_BASE_URL = 'http://localhost:8080';
 
     const [input, setInput] = useState("");
     const [currentModel, setCurrentModel] = useState("openai");
@@ -39,16 +39,6 @@ const ContextProvider = ({ children }) => {
     );
 
     const { loadImages } = imageState;
-
-    useEffect(() => {
-        if (imageState.isImageMode) {
-            setCurrentModel("gemini");
-        } else {
-            if (currentModel === "gemini") {
-                setCurrentModel("openai");
-            }
-        }
-    }, [imageState.isImageMode, currentModel]);
 
     useEffect(() => {
         if (currentUser) {
