@@ -1,4 +1,5 @@
 import { MoreVertical, LogOut } from "lucide-react"
+import { IoClose } from "react-icons/io5"
 import { useState, useEffect, useRef, useContext } from "react"
 import { useAuth } from '../../context/AuthContext'
 import { Context } from '../../context/ContextProvider'
