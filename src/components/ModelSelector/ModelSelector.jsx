@@ -5,17 +5,18 @@ const ModelSelector = ({ currentModel, setCurrentModel, isImageMode }) => {
   const [isOpen, setIsOpen] = useState(false)
   const dropdownRef = useRef(null)
 
-  // Filter models based on image mode
-  const allModels = [
-    { id: 'gemini', name: 'Gemini' },
+  const chatModels = [
+    { id: 'openai', name: 'OpenAI' },
     { id: 'claude', name: 'Claude' },
-    { id: 'openai', name: 'OpenAI' }
+    { id: 'gemini', name: 'Gemini' }
   ]
 
-  const models = isImageMode 
-    ? allModels.filter(m => m.id === 'gemini')  // Only Gemini for images
-    : allModels.filter(m => m.id !== 'gemini'); // Only OpenAI and Claude for chat
+  const imageModels = [
+    { id: 'dall-e-3', name: 'DALL-E 3' },
+    { id: 'imagen', name: 'Imagen' }
+  ]
 
+  const models = isImageMode ? imageModels : chatModels
   const currentModelData = models.find(model => model.id === currentModel) || models[0]
 
   const handleModelSelect = (modelId) => {
@@ -37,9 +38,8 @@ const ModelSelector = ({ currentModel, setCurrentModel, isImageMode }) => {
   return (
     <div className="model-selector" ref={dropdownRef}>
       <button
-        className={`model-selector-trigger ${isImageMode ? 'disabled' : ''}`}
-        onClick={() => !isImageMode && setIsOpen(!isOpen)}
-        disabled={isImageMode}
+        className="model-selector-trigger"
+        onClick={() => setIsOpen(!isOpen)}
         aria-label={`Current model: ${currentModelData.name}`}
       >
         <span className="model-name">{currentModelData.name}</span>
@@ -55,7 +55,7 @@ const ModelSelector = ({ currentModel, setCurrentModel, isImageMode }) => {
         </svg>
       </button>
 
-      {isOpen && !isImageMode && (
+      {isOpen && (
         <div className="model-selector-dropdown">
           {models.map((model) => (
             <button
