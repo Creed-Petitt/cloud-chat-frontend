@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import * as conversationService from '../services/conversation.service';
-import * as localStorageService from '../services/localStorage.service';
 
 export const useChat = (
     currentUser,
@@ -15,8 +14,8 @@ export const useChat = (
     const [showResult, setShowResult] = useState(false);
     const [loading, setLoading] = useState(false);
 
-    const getChatResponse = async (promptText = null, imageUrl = null, input = "") => {
-        const messageContent = promptText || input;
+    const getChatResponse = async (promptText = null, imageUrl = null) => {
+        const messageContent = promptText;
         // Allow message if either content or imageUrl is provided
         if (!messageContent.trim() && !imageUrl) {
             console.error('No message content or image provided');
@@ -44,13 +43,12 @@ export const useChat = (
 
         let conversationId = currentConversation?.id || 0;
         const model = currentModel;
-        let assistantResponse = "";
 
         try {
             const token = currentUser ? await currentUser.getIdToken() : null;
             setMessages(prev => [...prev, assistantMessage]);
 
-            assistantResponse = await conversationService.streamChatResponse({
+            await conversationService.streamChatResponse({
                 conversationId,
                 messageContent,
                 imageUrl,
@@ -91,15 +89,7 @@ export const useChat = (
             ));
         } finally {
             setLoading(false);
-
-            if (!currentUser && conversationId === 0) {
-                const updatedConversations = localStorageService.saveAnonymousMessage(
-                    messageContent,
-                    assistantResponse,
-                    model
-                );
-                setConversations(updatedConversations);
-            } else if (currentUser) {
+            if (currentUser) {
                 loadConversations();
             }
         }

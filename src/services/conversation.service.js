@@ -32,10 +32,8 @@ export const streamChatResponse = async ({
 }) => {
     const headers = {
         'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
     };
-    if (token) {
-        headers['Authorization'] = `Bearer ${token}`;
-    }
 
     const requestBody = {
         content: messageContent,

@@ -17,7 +17,7 @@ export const useImages = (currentUser, apiBaseUrl, currentConversation, loadConv
         }
     }, [currentUser, apiBaseUrl]);
 
-    const generateImage = async (prompt, setMessages, setLoading, setInput) => {
+    const generateImage = async (prompt, setMessages, setLoading) => {
         if (!prompt || !prompt.trim()) {
             console.error('No prompt provided for image generation');
             return;
@@ -78,7 +78,6 @@ export const useImages = (currentUser, apiBaseUrl, currentConversation, loadConv
             ));
         } finally {
             setLoading(false);
-            setInput("");
         }
     };
 

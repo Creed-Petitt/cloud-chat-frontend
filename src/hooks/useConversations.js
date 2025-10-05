@@ -1,6 +1,5 @@
 import { useState, useCallback, useEffect } from 'react';
 import * as conversationService from '../services/conversation.service';
-import * as localStorageService from '../services/localStorage.service';
 
 export const useConversations = (currentUser, apiBaseUrl) => {
     const [conversations, setConversations] = useState([]);
@@ -19,14 +18,6 @@ export const useConversations = (currentUser, apiBaseUrl) => {
     }, [currentUser, apiBaseUrl]);
 
     const selectConversation = async (conversationId) => {
-        const anonConversations = localStorageService.loadAnonymousConversations();
-        const anonConvo = anonConversations.find(c => c.id === conversationId);
-
-        if (anonConvo) {
-            setCurrentConversation(anonConvo);
-            return { conversation: anonConvo, messages: anonConvo.messages || [] };
-        }
-
         if (!currentUser) return null;
 
         try {
@@ -45,19 +36,6 @@ export const useConversations = (currentUser, apiBaseUrl) => {
     };
 
     const deleteConversation = async (conversationId) => {
-        const anonConversations = localStorageService.loadAnonymousConversations();
-        const anonConvo = anonConversations.find(c => c.id === conversationId);
-
-        if (anonConvo) {
-            const updatedConversations = localStorageService.deleteAnonymousConversation(conversationId);
-            setConversations(updatedConversations);
-
-            if (currentConversation?.id === conversationId) {
-                setCurrentConversation(null);
-            }
-            return;
-        }
-
         if (!currentUser) return;
 
         try {
@@ -81,10 +59,6 @@ export const useConversations = (currentUser, apiBaseUrl) => {
     useEffect(() => {
         if (currentUser) {
             loadConversations();
-        } else {
-            const anonConversations = localStorageService.loadAnonymousConversations();
-            setConversations(anonConversations);
-            setCurrentConversation(null);
         }
     }, [currentUser, loadConversations]);
 

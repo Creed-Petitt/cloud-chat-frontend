@@ -3,7 +3,8 @@ import { auth, googleProvider, githubProvider } from '../lib/firebase';
 import {
     signInWithPopup,
     signOut,
-    onAuthStateChanged
+    onAuthStateChanged,
+    signInAnonymously
 } from 'firebase/auth';
 
 const AuthContext = React.createContext();
@@ -97,12 +98,24 @@ export function AuthProvider({ children }) {
     }
 
     useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, user => {
-            setCurrentUser(user);
-            setLoading(false);
+        const unsubscribe = onAuthStateChanged(auth, async (user) => {
+            if (!user) {
+                // No user - sign in anonymously
+                try {
+                    await signInAnonymously(auth);
+                    // Don't set loading=false here - let the next onAuthStateChanged call handle it
+                } catch (error) {
+                    console.error('Anonymous sign in failed:', error);
+                    setCurrentUser(null);
+                    setLoading(false);
+                }
+            } else {
+                // Wait for token to be ready before allowing app to render
+                await user.getIdToken();
+                setCurrentUser(user);
+                setLoading(false);
+            }
         });
-
-        // No need for redirect result handling since we're using popup only
 
         return unsubscribe;
     }, []);
