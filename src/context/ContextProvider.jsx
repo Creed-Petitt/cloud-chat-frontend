@@ -40,6 +40,15 @@ const ContextProvider = ({ children }) => {
 
     const { loadImages } = imageState;
 
+    // Clear all state when user UID changes (logout → new anonymous user)
+    useEffect(() => {
+        conversationState.setConversations([]);
+        conversationState.setCurrentConversation(null);
+        chatState.setMessages([]);
+        chatState.setShowResult(false);
+        imageState.setGeneratedImages([]);
+    }, [currentUser?.uid]);
+
     useEffect(() => {
         if (currentUser) {
             loadImages();
@@ -70,13 +79,23 @@ const ContextProvider = ({ children }) => {
     };
 
     const getChatResponse = async (promptText = null, imageUrl = null) => {
-        await chatState.getChatResponse(promptText, imageUrl, input);
+        const currentInput = promptText || input;
+        if (!currentInput.trim() && !imageUrl) {
+            return;
+        }
         setInput("");
+        await chatState.getChatResponse(currentInput, imageUrl);
+        imageState.setIsImageMode(false);
     };
 
     const generateImage = async (prompt) => {
+        if (!prompt || !prompt.trim()) {
+            return;
+        }
+        setInput("");
         chatState.setShowResult(true);
-        await imageState.generateImage(prompt, chatState.setMessages, chatState.setLoading, setInput);
+        await imageState.generateImage(prompt, chatState.setMessages, chatState.setLoading);
+        imageState.setIsImageMode(false);
     };
 
     const uploadFile = async (file) => {
