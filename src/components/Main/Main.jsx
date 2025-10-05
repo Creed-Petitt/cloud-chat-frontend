@@ -85,9 +85,19 @@ const Main = () => {
 		return () => document.removeEventListener('click', handleImageClick);
 	}, []);
 
-	const handleCardClick = (prompt) => {
+	    const handleImageGenCard = (prompt) => {
+	        setIsImageMode(true);
+	        setCurrentModel('imagen');
+	        generateImage(prompt);
+	    };
+	const handleFileUploadCard = (prompt, acceptType = 'image/*,application/pdf') => {
 		setInput(prompt);
-		getChatResponse(prompt);
+		setIsImageMode(false);
+		setCurrentModel('openai');
+		if (fileInputRef.current) {
+			fileInputRef.current.accept = acceptType;
+			fileInputRef.current.click();
+		}
 	};
 
 	const handleSend = async () => {
@@ -146,14 +156,14 @@ const Main = () => {
 	};
 
 	const getUserDisplayName = () => {
-		if (!currentUser) return 'Guest';
-		if (currentUser.displayName) {
+		if (currentUser?.isAnonymous) return 'Guest';
+		if (currentUser?.displayName) {
 			return currentUser.displayName.split(' ')[0];
 		}
-		if (currentUser.email) {
+		if (currentUser?.email) {
 			return currentUser.email.split('@')[0];
 		}
-		return 'User';
+		return 'Guest';
 	};
 
 	const handleFileInputChange = (e) => {
@@ -162,6 +172,7 @@ const Main = () => {
 			setSelectedFile(file);
 			setUploadedImageUrl(null);
 			setShowFilePopup(false);
+
 			// Reset input so same file can be selected again
 			if (fileInputRef.current) {
 				fileInputRef.current.value = '';
@@ -205,21 +216,65 @@ const Main = () => {
 									<p>{currentUser ? "What can I help you with today?" : "Sign in to save your images"}</p>
 								</div>
 								<div className="cards">
-									<div className="card" onClick={() => handleCardClick("Explain the concept of cloud computing.")}>
-										<p>Explain the concept of cloud computing.</p>
-										<svg xmlns="http://www.w3.org/2000/svg" height="40px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M160-160v-80h109q-51-44-80-106t-29-134q0-112 68-197.5T400-790v84q-70 25-115 86.5T240-480q0 54 21.5 99.5T320-302v-98h80v240H160Zm440 0q-50 0-85-35t-35-85q0-48 33-82.5t81-36.5q17-36 50.5-58.5T720-480q53 0 91.5 34.5T858-360q42 0 72 29t30 70q0 42-29 71.5T860-160H600Zm116-360q-7-41-27-76t-49-62v98h-80v-240h240v80H691q43 38 70.5 89T797-520h-81ZM600-240h260q8 0 14-6t6-14q0-8-6-14t-14-6h-70v-50q0-29-20.5-49.5T720-400q-29 0-49.5 20.5T650-330v10h-50q-17 0-28.5 11.5T560-280q0 17 11.5 28.5T600-240Zm120-80Z" /></svg>
+									<div
+										className="card"
+										onMouseEnter={() => {
+											setInput("I'm uploading my resume. Could you review it and provide constructive feedback on: structure and formatting, content clarity, how well it highlights my skills and experience, and any suggestions for improvement? Please be specific and actionable in your recommendations.");
+											setIsImageMode(false);
+											setCurrentModel('openai');
+										}}
+										onClick={() => handleFileUploadCard("I'm uploading my resume. Could you review it and provide constructive feedback on: structure and formatting, content clarity, how well it highlights my skills and experience, and any suggestions for improvement? Please be specific and actionable in your recommendations.", "application/pdf")}
+									>
+										<p>Review my resume and give feedback</p>
+										<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="#b8b8b8">
+											<path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm0-80h560v-560H200v560Zm40-80h480L570-480 450-320l-90-120-120 160Zm-40 80v-560 560Z"/>
+										</svg>
 									</div>
-									<div className="card" onClick={() => handleCardClick("Tell me how computers operate at a low level")}>
-										<p>Tell me how computers operate at a low level</p>
-										<svg xmlns="http://www.w3.org/2000/svg" height="40px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M40-120v-80h880v80H40Zm120-120q-33 0-56.5-23.5T80-320v-440q0-33 23.5-56.5T160-840h640q33 0 56.5 23.5T880-760v440q0 33-23.5 56.5T800-240H160Zm0-80h640v-440H160v440Zm0 0v-440 440Z" /></svg>
+									<div
+										className="card"
+										onMouseEnter={() => {
+											setInput("Create a futuristic cityscape at sunset in ultra realistic style, with towering skyscrapers and warm golden light");
+											setIsImageMode(true);
+											setCurrentModel('imagen');
+										}}
+										onMouseLeave={() => {
+											setInput("");
+											setIsImageMode(false);
+										}}
+										onClick={() => handleImageGenCard("Create a futuristic cityscape at sunset in ultra realistic style, with towering skyscrapers and warm golden light")}
+									>
+										<p>Create a futuristic cityscape at sunset</p>
+										<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="#b8b8b8"><path d="m734-556-56-58 86-84 56 56-86 86ZM80-160v-80h800v80H80Zm360-520v-120h80v120h-80ZM226-558l-84-86 56-56 86 86-58 56Zm71 158h366q-23-54-72-87t-111-33q-62 0-111 33t-72 87Zm-97 80q0-117 81.5-198.5T480-600q117 0 198.5 81.5T760-320H200Zm280-80Z"/></svg>
 									</div>
-									<div className="card" onClick={() => handleCardClick("Give me a detailed breakdown on how the internet works")}>
-										<p>Give me a detailed breakdown on how the internet works</p>
-										<svg xmlns="http://www.w3.org/2000/svg" height="40px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M196-276q-57-60-86.5-133T80-560q0-78 29.5-151T196-844l48 48q-48 48-72 110.5T148-560q0 63 24 125.5T244-324l-48 48Zm96-96q-39-39-59.5-88T212-560q0-51 20.5-100t59.5-88l48 48q-30 27-45 64t-15 76q0 36 15 73t45 67l-48 48ZM280-80l135-405q-16-14-25.5-33t-9.5-42q0-42 29-71t71-29q42 0 71 29t29 71q0 23-9.5 42T545-485L680-80h-80l-26-80H387l-27 80h-80Zm133-160h134l-67-200-67 200Zm255-132-48-48q30-27 45-64t15-76q0-36-15-73t-45-67l48-48q39 39 58 88t22 100q0 51-20.5 100T668-372Zm96 96-48-48q48-48 72-110.5T812-560q0-63-24-125.5T716-796l48-48q57 60 86.5 133T880-560q0 78-28 151t-88 133Z" /></svg>
+									<div
+										className="card"
+										onMouseEnter={() => {
+											setInput("I have a project idea I'd like to plan out. Could you help me break it down into actionable steps? Specifically, I'm looking for: tech stack recommendations, core features to prioritize first, and potential challenges. Feel free to ask me clarifying questions about my idea, timeline, or technical constraints. Keep your response practical and conversational.");
+											setIsImageMode(false);
+											setCurrentModel('openai');
+										}}
+										onMouseLeave={() => {
+											setInput("");
+										}}
+										onClick={() => getChatResponse("I have a project idea I'd like to plan out. Could you help me break it down into actionable steps? Specifically, I'm looking for: tech stack recommendations, core features to prioritize first, and potential challenges. Feel free to ask me clarifying questions about my idea, timeline, or technical constraints. Keep your response practical and conversational.", null)}
+									>
+										<p>Help me plan my next full stack website</p>
+										<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="#b8b8b8"><path d="M160-240v-480 520-40Zm0 80q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h240l80 80h320q33 0 56.5 23.5T880-640v200h-80v-200H447l-80-80H160v480h200v80H160ZM584-56 440-200l144-144 56 57-87 87 87 87-56 57Zm192 0-56-57 87-87-87-87 56-57 144 144L776-56Z"/></svg>
 									</div>
-									<div className="card" onClick={() => handleCardClick("Give me 5 creative ideas for a weekend project I can build using Python")}>
-										<p>Give me 5 creative ideas for a weekend project I can build using Python</p>
-										<svg xmlns="http://www.w3.org/2000/svg" height="40px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M320-240 80-480l240-240 57 57-184 184 183 183-56 56Zm320 0-57-57 184-184-183-183 56-56 240 240-240 240Z" /></svg>
+									<div
+										className="card"
+										onMouseEnter={() => {
+											setInput("I need to design a database schema for a new project. Could you help me create it? I can provide details about the project's requirements, the types of data I need to store, and the relationships between them. Please ask me questions to help elicit the necessary information to generate a well-structured schema.");
+											setIsImageMode(false);
+											setCurrentModel('openai');
+										}}
+										onMouseLeave={() => {
+											setInput("");
+										}}
+										onClick={() => getChatResponse("I need to design a database schema for a new project. Could you help me create it? I can provide details about the project's requirements, the types of data I need to store, and the relationships between them. Please ask me questions to help elicit the necessary information to generate a well-structured schema.", null)}
+									>
+										<p>Create a database schema</p>
+										<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="#b8b8b8"><path d="M480-120q-151 0-255.5-46.5T120-280v-400q0-66 105.5-113T480-840q149 0 254.5 47T840-680v400q0 67-104.5 113.5T480-120Zm0-479q89 0 179-25.5T760-679q-11-29-100.5-55T480-760q-91 0-178.5 25.5T200-679q14 30 101.5 55T480-599Zm0 199q42 0 81-4t74.5-11.5q35.5-7.5 67-18.5t57.5-25v-120q-26 14-57.5 25t-67 18.5Q600-528 561-524t-81 4q-42 0-82-4t-75.5-11.5Q287-543 256-554t-56-25v120q25 14 56 25t66.5 18.5Q358-408 398-404t82 4Zm0 200q46 0 93.5-7t87.5-18.5q40-11.5 67-26t32-29.5v-98q-26 14-57.5 25t-67 18.5Q600-328 561-324t-81 4q-42 0-82-4t-75.5-11.5Q287-343 256-354t-56-25v99q5 15 31.5 29t66.5 25.5q40 11.5 88 18.5t94 7Z"/></svg>
 									</div>
 								</div>
 							</> :

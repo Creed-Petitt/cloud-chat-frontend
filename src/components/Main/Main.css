@@ -57,7 +57,7 @@
 .main .greet span{
     background: -webkit-linear-gradient(16deg, #161cbe, #0ccc46);
     -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;;
+    -webkit-text-fill-color: transparent;
 }
 
 .main .cards{
@@ -100,9 +100,9 @@
 .main .bottom{
     width: 100%;
     max-width: 900px;
-    margin: 0 auto; /* Changed from margin:auto */
+    margin: 0 auto; 
     padding: 0 20px;
-    padding-bottom: 3vh; /* Lifts it from the bottom */
+    padding-bottom: 3vh; 
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -230,7 +230,7 @@
     fill: #e3e3e3;
 }
 .bottom p{
-    display: none; /* Remove footer text as requested */
+    display: none; 
 }
 
 .result{
@@ -431,6 +431,17 @@ strong {
     color: #ffffff;
 }
 
+a {
+    color: #0084ff;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+a:hover {
+    color: #3ca0ff;
+    text-decoration: underline;
+}
+
 .list-item {
     margin: 6px 0;
     padding-left: 0;
@@ -483,6 +494,36 @@ strong {
     color: #888;
     position: absolute;
     left: 24px;
+}
+
+.list-item.sub-bullet-1 {
+    padding-left: 60px;
+    margin: 8px 0;
+    color: #c8c8c8;
+    font-size: 0.93em;
+    position: relative;
+}
+
+.list-item.sub-bullet-1::before {
+    content: "▪";
+    color: #888;
+    position: absolute;
+    left: 44px;
+}
+
+.list-item.sub-bullet-2 {
+    padding-left: 80px;
+    margin: 8px 0;
+    color: #c0c0c0;
+    font-size: 0.91em;
+    position: relative;
+}
+
+.list-item.sub-bullet-2::before {
+    content: "‣";
+    color: #888;
+    position: absolute;
+    left: 64px;
 }
 
 
