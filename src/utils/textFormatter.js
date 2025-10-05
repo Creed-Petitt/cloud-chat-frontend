@@ -45,6 +45,9 @@ export const formatMessageContent = (content) => {
         return `<code class="inline-code">${escapedCode}</code>`;
     });
 
+    // Handle markdown links
+    formatted = formatted.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+
     // Handle bold text
     formatted = formatted.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
 
@@ -66,27 +69,9 @@ export const formatMessageContent = (content) => {
             return p;
         }
 
-        // Handle numbered sections (1., 2., 3. with bold)
-        if (/^\d+\.\s+\*\*/.test(p)) {
-            return `<div class="section-header">${p}</div>`;
-        }
-
-        // Handle numbered headers with colons
-        if (/^\d+\.\s+[^:]+:\s*$/.test(p)) {
-            return `<div class="numbered-header">${p}</div>`;
-        }
-
-        // Handle section headers that were already processed or **Header** format
-        if (p.startsWith('<div class="heading">') || /^\*\*[^*]+\*\*\s*$/.test(p)) {
-            if (!p.startsWith('<div')) {
-                return `<div class="heading">${p}</div>`;
-            }
+        // If this is already a processed heading, return as-is
+        if (p.startsWith('<div class="heading">')) {
             return p;
-        }
-
-        // Handle standalone headers ending with colon
-        if (/^[A-Z][^.!?]*:\s*$/.test(p)) {
-            return `<div class="heading">${p}</div>`;
         }
 
         // Handle lists - split by lines and check each line
@@ -108,10 +93,13 @@ export const formatMessageContent = (content) => {
                 return `<div class="list-item bullet">${trimmedLine.substring(2)}</div>`;
             }
 
-            // Sub-bullet points (indented)
-            if (/^\s+[\*\-•]\s+/.test(trimmedLine)) {
+            // Sub-bullet points (indented) - handle multiple indent levels
+            const indentMatch = line.match(/^(\s+)[\*\-•]\s+(.+)/);
+            if (indentMatch) {
                 hasListItems = true;
-                return `<div class="list-item sub-bullet">${trimmedLine.trim().substring(2)}</div>`;
+                const indentLevel = Math.min(Math.floor(indentMatch[1].length / 4), 2); // Cap at 2 levels
+                const className = indentLevel === 0 ? 'sub-bullet' : `sub-bullet-${indentLevel}`;
+                return `<div class="list-item ${className}">${indentMatch[2]}</div>`;
             }
 
             return trimmedLine;
