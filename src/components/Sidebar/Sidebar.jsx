@@ -1,6 +1,4 @@
-import { MoreVertical, ChevronLast, ChevronFirst, LogOut } from "lucide-react"
-import { IoAdd, IoImagesOutline, IoClose } from "react-icons/io5"
-import { HiPlus, HiPhoto } from "react-icons/hi2"
+import { MoreVertical, LogOut } from "lucide-react"
 import { useState, useEffect, useRef, useContext } from "react"
 import { useAuth } from '../../context/AuthContext'
 import { Context } from '../../context/ContextProvider'
@@ -55,16 +53,17 @@ export default function Sidebar({ onExpandedChange }) {
   }
 
   const handleUserSectionClick = () => {
-    if (user) {
+    if (user && !user.isAnonymous) {
       setShowUserMenu(!showUserMenu)
     } else {
+      // If anonymous, just show auth modal (signing in will replace anonymous account)
       setIsAuthModalOpen(true)
     }
   }
 
   const getUserDisplayName = () => {
-    if (!user) return 'Guest'
-    return user.displayName || user.email?.split('@')[0] || 'User'
+    if (user?.isAnonymous) return 'Guest'
+    return user?.displayName || user?.email?.split('@')[0] || 'Guest'
   }
 
   const getUserEmail = () => {
@@ -77,8 +76,8 @@ export default function Sidebar({ onExpandedChange }) {
     }
 
     const name = getUserDisplayName()
-    const bgColor = user ? '0ccc46' : 'cccccc'
-    const textColor = user ? '161cbe' : '333333'
+    const bgColor = (user && !user.isAnonymous) ? '0ccc46' : 'e3e3e3'
+    const textColor = (user && !user.isAnonymous) ? '161cbe' : '666666'
     return `https://ui-avatars.com/api/?background=${bgColor}&color=${textColor}&bold=true&name=${encodeURIComponent(name)}`
   }
 
@@ -116,7 +115,7 @@ export default function Sidebar({ onExpandedChange }) {
             onClick={handleExpandToggle}
             className="sidebar-toggle"
           >
-            {expanded ? <ChevronFirst size={20} /> : <ChevronLast size={20} />}
+            {expanded ? <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm440-80h120v-560H640v560Zm-80 0v-560H200v560h360Zm80 0h120-120Z"/></svg> : <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm440-80h120v-560H640v560Zm-80 0v-560H200v560h360Zm80 0h120-120Z"/></svg>}
           </button>
         </div>
 
@@ -196,8 +195,8 @@ export default function Sidebar({ onExpandedChange }) {
               </div>
             )}
             <div className={`sidebar-user-info ${expanded ? "expanded" : "collapsed"}`}>
-              {user && <h4 className="sidebar-user-name">{getUserDisplayName()}</h4>}
-              {user && (
+              {user && !user.isAnonymous && <h4 className="sidebar-user-name">{getUserDisplayName()}</h4>}
+              {user && !user.isAnonymous && (
                 <button
                   className="sidebar-user-menu-trigger"
                   onClick={handleUserSectionClick}
@@ -205,7 +204,7 @@ export default function Sidebar({ onExpandedChange }) {
                   <MoreVertical size={16} />
                 </button>
               )}
-              {!user && expanded && (
+              {(!user || user.isAnonymous) && expanded && (
                 <button className="sidebar-signin-button" onClick={handleUserSectionClick}>
                   Sign In
                 </button>
