@@ -47,6 +47,8 @@ const ContextProvider = ({ children }) => {
         chatState.setMessages([]);
         chatState.setShowResult(false);
         imageState.setGeneratedImages([]);
+        imageState.setIsImageMode(false);
+        setCurrentModel('openai');
     }, [currentUser?.uid]);
 
     useEffect(() => {
@@ -68,6 +70,8 @@ const ContextProvider = ({ children }) => {
         conversationState.startNewConversation();
         chatState.setMessages([]);
         chatState.setShowResult(false);
+        imageState.setIsImageMode(false);
+        setCurrentModel('openai');
     };
 
     const deleteConversation = async (conversationId) => {
