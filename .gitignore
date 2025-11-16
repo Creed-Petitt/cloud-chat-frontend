@@ -30,3 +30,6 @@ dist-ssr
 .env.development
 eslint.config.js
 
+src/lib/firebase.js
+package-lock.json
+.vercel
